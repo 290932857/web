@@ -1,0 +1,17 @@
+html,body,ul,li,a,span,h1,h2,h3,h4,h5,h6,form,input,em,i,dl,dt,dd,table,tr,td,th,thead,tbody{margin: 0;padding: 0;font-style: normal;font-weight: normal;font:12px  '微软雅黑', 'Microsoft YaHei', 'Hei', sans-serif;}
+.clear{clear: both;}
+body{background-image: url("../images/login_back.jpg");background-repeat: repeat-x;width: 100%;height: 100%;overflow: hidden;background-color: #a5c8ee;}
+.warp_login{width: 534px;height: auto;margin: 0 auto;background-image: url("../images/login_yy.png");
+background-position: bottom;background-repeat: no-repeat;padding-bottom: 60px;}
+.login{width: 380px;height: auto;border-radius: 20px;margin: 0 auto;background-color: #ffffff;margin-top: 140px;}
+.login_logo{width: 380px;height: auto;}
+.login_logo img{width: 100%;height: auto;border-top-left-radius:20px;border-top-right-radius:20px;  }
+.login_con{width: 210px;height: auto;padding-top: 20px;margin: 0 auto;padding-bottom: 56px;}
+.login_peo{width: 210px;height: 39px;margin-bottom: 15px;}
+.login_peo .login_peo_i{width: 34px;height: 37px;border: 1px solid #c9caca;background-image: url("../images/icon_peo.png");background-repeat: no-repeat;background-size: 11px 12px;background-position: center;display: block;float: left;background-color: #e6eaef;}
+.login_peo input{height: 39px;border: 0;width: 169px;line-height: 39px;padding-left: 5px;background-color: #e6eaef;float: left;}
+.login_peo .login_key_i{width: 34px;height: 37px;border: 1px solid #c9caca;background-image: url("../images/icon_key.png");background-repeat: no-repeat;background-size: 13px 13px;background-position: center;display: block;float: left;background-color: #e6eaef; }
+.login_peo .login_inp{width: 111px;}
+.login_yan{width: 94px;float: left;height: 39px;}
+.login_yan img{width: 100%;height: 100%;}
+.login_deng{width: 211px;height: 39px;background-color: #72b3d1;border: 0;color: #ffffff;font-size: 14px;border-radius: 5px;}

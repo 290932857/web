@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.e6wifi.cmp.business.sys.menu.dao.SysResourcesMapper">
+	<resultMap id="BaseResultMap" type="com.e6wifi.cmp.business.sys.menu.model.SysResources">
+		<id column="reid" property="reid" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="CHAR" />
+		<result column="breadcrub" property="breadcrub" jdbcType="VARCHAR" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+		<result column="parentid" property="parentid" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="dateline" property="dateline" jdbcType="BIGINT" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+	</resultMap>
+	<select id="getResources" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT
+			r.reid as reid,r.parentid as parentid,r.name as name,
+			r.breadcrub as breadcrub,r.path as path,r.type as type,r.sort as sort
+		FROM
+			t_sys_resources r
+		LEFT JOIN
+			t_permissions p ON r.reid = p.resources_id
+		LEFT JOIN
+			t_sys_role u ON p.role_code = u.role_code
+		WHERE
+			u.user_id = #{userId} AND p.state = 1
+		ORDER BY
+			r.sort, r.reid
+	</select>
+</mapper>
