@@ -19,5 +19,4 @@ public interface SysResourcesMapper {
 	 */
     List<SysResources> getResources(Integer userId);
 
-    
 }
