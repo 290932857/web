@@ -130,6 +130,7 @@ Ext.onReady(function() {
             borderColor: 'white'
         }
     });
+
 	
 	var sm = new Ext.selection.CheckboxModel();
 	var panelGrid = Ext.create('Ext.panel.Panel', {
@@ -198,6 +199,13 @@ Ext.onReady(function() {
 			}, {
 				text : '下单日期',
 				dataIndex : 'orderDate',
+				renderer : function(value) {
+					if(null != value){ 
+				        return Ext.Date.format(new Date(value), 'Y-m-d H:i:s'); 
+				    }else{ 
+				        return null; 
+				    } 
+			 	},
 				flex : 2
 			}, {
                 header : '订单状态',
