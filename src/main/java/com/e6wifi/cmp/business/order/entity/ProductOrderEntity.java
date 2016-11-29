@@ -19,6 +19,11 @@ public class ProductOrderEntity extends BaseEntity {
 	private String orderNo;
 	
 	/**
+	 * 仓库ID
+	 */
+	private Long warehouseOid;
+	
+	/**
 	 * 供应商ID
 	 */
 	private Long providerOid;
@@ -57,7 +62,7 @@ public class ProductOrderEntity extends BaseEntity {
 	 * 订单备注
 	 */
 	private String description;
-
+	
 	public String getOrderNo() {
 		return orderNo;
 	}
@@ -128,5 +133,13 @@ public class ProductOrderEntity extends BaseEntity {
 
 	public void setProviderFax(String providerFax) {
 		this.providerFax = providerFax;
+	}
+
+	public Long getWarehouseOid() {
+		return warehouseOid;
+	}
+
+	public void setWarehouseOid(Long warehouseOid) {
+		this.warehouseOid = warehouseOid;
 	}
 }

@@ -17,4 +17,32 @@
 			and o.state = #{state}
 		</if>
 	</select>
+	
+	<select id="getProductOrder" resultType="com.e6wifi.cmp.business.order.entity.ProductOrderEntity" 
+			parameterType="long">
+		select
+			o.oid, order_no as orderNo, provider_oid as providerOid, order_date as orderDate, state, description, o.create_user_id, o.create_time, u.uid, u.user_name, 
+			p.name as providerName, p.linkman as providerLinkman, p.linkman_telphone as providerTelphone, p.fax as providerFax
+		from 
+			t_order o left join t_sys_user u on o.create_user_id=u.uid
+			left join t_provider p on o.provider_oid=p.oid
+		where 1=1
+		<if test="oid != null and oid != ''">
+			and o.oid = #{oid}
+		</if>
+	</select>
+	
+	<insert id="insertOrder" parameterType="com.e6wifi.cmp.business.order.entity.ProductOrderEntity" useGeneratedKeys="true" keyProperty="oid">
+	  insert into t_order(order_no, warehouse_oid, provider_oid, order_date, state, description, create_user_id, create_time) 
+	  values(#{orderNo}, #{warehouseOid}, #{providerOid}, #{orderDate}, #{state}, #{description}, #{createUserId}, #{createTime})
+	</insert>
+	
+	<delete id="deleteOrder" parameterType="long">
+		delete from t_order where oid=#{oid}
+	</delete>
+	
+	<update id="updateOrder" parameterType="com.e6wifi.cmp.business.order.entity.ProductOrderEntity">
+		update t_order set state=#{state} where oid=#{oid}
+	</update>
+	
 </mapper>

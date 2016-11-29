@@ -1,7 +1,7 @@
 package com.e6wifi.cmp.common.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import com.e6wifi.cmp.common.model.Page;
 

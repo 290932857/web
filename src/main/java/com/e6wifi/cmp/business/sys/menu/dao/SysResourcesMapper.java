@@ -7,7 +7,7 @@ import com.e6wifi.cmp.business.sys.menu.model.SysResources;
 /**
  * 资源Mapper
  * 
- * @author Lijiacheng
+ * @author 
  */
 public interface SysResourcesMapper {
 

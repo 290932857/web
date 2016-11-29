@@ -49,6 +49,72 @@ Ext.onReady(function() {
         items: [{
             text: '添加',
             handler : showBatchEdit
+        } , {
+            text: '删除',
+            id: 'delete',
+            disabled : 1,
+            enableToggle:true,
+            handler : function (){
+            	Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+					if (button == "yes") {
+						var records = Ext.getCmp("orderGrid").getSelectionModel().getSelection();
+						//var records = panelGrid.getSelectionModel().getSelection();
+						//获得要删除的元素
+						var ids = []; //要删除的id
+		          		for(var i=0;i<records.length;i++) {
+		          			ids.push(records[i].data.oid);
+		          		}
+						//ajax请求
+		          		Ext.Ajax.request({
+		                     url: '/web/order/deleteProductOrder.do',
+		                     method: "post",
+		                     success: function (response, opts) {
+		                         Ext.MessageBox.hide();
+		                         var json = Ext.JSON.decode(response.responseText);
+		                         if (json.success) {
+		                        	 orderStore.load();
+		                             Ext.Msg.alert('系统提示', "删除成功");
+		                         } else {
+		                             Ext.Msg.alert("系统提示", json.message);
+		                         }
+		                     },
+		                     failure: function () {
+		                         Ext.Msg.alert('系统提示', '系统出错！');
+		                     },
+		                     params: {'params' : ids}
+		                });
+					}
+				});
+            }
+        } , {
+            text: '签收',
+            id: 'sign_in',
+            disabled : 1,
+            enableToggle:true,
+            handler : function() {
+				var records = Ext.getCmp("orderGrid").getSelectionModel().getSelection();
+				//获得要删除的元素
+          		var oid = records[0].data.oid;
+				//ajax请求
+          		Ext.Ajax.request({
+                     url: '/web/order/signProductOrder.do',
+                     method: "post",
+                     success: function (response, opts) {
+                         Ext.MessageBox.hide();
+                         var json = Ext.JSON.decode(response.responseText);
+                         if (json.success) {
+                        	 orderStore.load();
+                             Ext.Msg.alert('系统提示', "签收成功");
+                         } else {
+                             Ext.Msg.alert("系统提示", json.message);
+                         }
+                     },
+                     failure: function () {
+                         Ext.Msg.alert('系统提示', '系统出错！');
+                     },
+                     params: {'oid' : oid}
+                });
+            }
         },{
             text: '过滤',
             handler : function(item, pressed) {
@@ -65,7 +131,8 @@ Ext.onReady(function() {
         }
     });
 	
-	var panel = Ext.create('Ext.panel.Panel', {
+	var sm = new Ext.selection.CheckboxModel();
+	var panelGrid = Ext.create('Ext.panel.Panel', {
 		width : '100%',
 		layout : 'hbox',
 		items : [ {
@@ -74,6 +141,7 @@ Ext.onReady(function() {
 			xtype : 'grid',
 			flex : 1,
 			store : orderStore,
+			selModel : sm,
 			dockedItems : [gridbar,{
 				id : 'faultHistoryGridFilterPanel1',
 				xtype : 'toolbar',
@@ -100,6 +168,16 @@ Ext.onReady(function() {
                  }
              }]
 			}],
+			listeners: {
+    	        selectionchange: function(grid, selection) {
+    	        	if (panelGrid.down('#delete') != null) {
+    	        		panelGrid.down('#delete').setDisabled(selection.length === 0);
+    				}
+    				if (panelGrid.down('#sign_in') != null) {
+    					panelGrid.down('#sign_in').setDisabled(selection.length === 0 || selection.length > 1);
+    				}
+    	    	 }
+    	    },
 			columns : [ {
 				text : '序号',
 				dataIndex : 'id',
@@ -254,15 +332,14 @@ Ext.onReady(function() {
                 	    },
                 	    listeners: {
                 	        selectionchange: function(grid, selection) {
-                	         	prductSelect = "{";
+                	         	prductSelect = "[";
                 	    		for(var i = 0 ; i < selection.length; i++) {
-                	    			prductSelect += "['oid':" + selection[i].data.oid + ", 'num' :" + selection[i].data.num +"]";
+                	    			prductSelect += "{'pOid':" + selection[i].data.oid + ", 'num' :" + selection[i].data.num +"}";
                 	    			if(i != selection.length -1) {
                 	    				prductSelect += ","
                 	    			}
                 	    		}
-                	    		prductSelect += "}";
-                	    		console.log(prductSelect);
+                	    		prductSelect += "]";
                 	    	 }
                 	    },
                 		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
@@ -288,7 +365,7 @@ Ext.onReady(function() {
 	                    if (batch_form.isValid()) {
 	                    	batch_form.submit({
 	                    	    clientValidation: true,
-	                    	    waitMsg:'正在变更，请稍候。', 
+	                    	    waitMsg:'保存订单，请稍候。', 
 	                    	    waitTitle:'提示', 
 	                    	    method : 'POST',
 	                    	    url: '/web/order/saveProductOrder.do',
@@ -297,9 +374,9 @@ Ext.onReady(function() {
 	                    	    success: function(form, action) {
 	                    	    	var json = Ext.JSON.decode(action.response.responseText);
 	                    	    	if(json.success == true) {
-		                    	    	Ext.Msg.alert('提示', '变更成功');
+	                    	    		orderStore.load();
+		                    	    	Ext.Msg.alert('提示', '订单保存成功');
 		                    	    	batchWin.destroy();
-			                    	    //store.load();
 	                  		    	} else {
 		                  		    	Ext.Msg.alert("系统提示", json.message);
 	                  		    	}
