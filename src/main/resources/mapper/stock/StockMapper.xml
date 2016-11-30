@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.e6wifi.cmp.business.stock.dao.StockDao">
+	<insert id="insertOrUpdateStock" parameterType="java.util.List">
+		insert into t_stock(order_oid, p_oid, num, add_date) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.orderOid},#{item.pOid},#{item.num},#{item.addDate})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteStockByOrderOid" parameterType="long">
+		delete from t_stock where order_oid=#{orderOid}
+	</delete>
+</mapper>
