@@ -11,4 +11,5 @@
 	<delete id="deleteStockByOrderOid" parameterType="long">
 		delete from t_stock where order_oid=#{orderOid}
 	</delete>
+	
 </mapper>

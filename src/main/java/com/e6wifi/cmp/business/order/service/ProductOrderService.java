@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import com.e6wifi.cmp.business.order.dao.ProductOrderDao;
 import com.e6wifi.cmp.business.order.entity.ProductOrderEntity;
+import com.e6wifi.cmp.business.product.entity.ProductEntity;
+import com.e6wifi.cmp.business.product.service.ProductService;
 import com.e6wifi.cmp.business.stock.entity.StockEntity;
 import com.e6wifi.cmp.business.stock.service.StockService;
 import com.google.gson.Gson;
@@ -27,7 +29,10 @@ public class ProductOrderService {
 	
 	@Autowired
 	private StockService stockService;
-
+	
+	@Autowired
+	private ProductService productService;
+	
 	public void getProductOrderPage (ProductOrderEntity query) {
 		List<ProductOrderEntity> list = productOrderDao.getProductOrderPage(query);
 		if(list != null && !list.isEmpty()) {
@@ -44,6 +49,8 @@ public class ProductOrderService {
 	public Long insertOrder(ProductOrderEntity entity, String params) {
 		if(entity != null) {
 			//订单保存
+			entity.setState(1);
+			entity.setOrderDate(new Date());
 			long num = productOrderDao.insertOrder(entity);
 			if(num <= 0 && entity.getOid() == null) {
 				return null;
@@ -114,5 +121,42 @@ public class ProductOrderService {
 			return num;
 		}
 		throw new Exception("更新订单状态失败");
+	}
+	
+	/**
+	 * 查询订单
+	 * @param oid
+	 * @return
+	 * @throws Exception
+	 */
+	public ProductOrderEntity getProductOrder(Long oid) throws Exception {
+		if(oid == null) {
+			throw new Exception("oid为空");
+		}
+		ProductOrderEntity entity = productOrderDao.getProductOrder(oid);
+		if(entity != null) {
+			return entity;
+		}
+		throw new Exception("未查询到该订单");
+	}
+	
+	/**
+	 * 通过订单ID查询产品信息
+	 * @param oid
+	 * @return
+	 * @throws Exception
+	 */
+	public ProductOrderEntity getProductByOrderOid(Long oid) throws Exception {
+		if(oid == null) {
+			throw new Exception("oid为空");
+		}
+		ProductOrderEntity entity  = getProductOrder(oid);
+		if(entity != null) {
+			List<ProductEntity> list = productService.getProductByOrderOid(oid);
+			entity.setProductEntities(list);
+			return entity;
+		}
+		
+		throw new Exception("未查询到该订单");
 	}
 }

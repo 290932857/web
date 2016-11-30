@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.e6wifi.cmp.business.product.dao.ProductDao">
+	
+	<select id="getProductByOrderOid" resultType="com.e6wifi.cmp.business.product.entity.ProductEntity" 
+			parameterType="long">
+		select p.oid, p.p_name as pName, p.type, p.outline, p.unit_type as unitType, p.pack_type as packType, p.price, s.num from t_stock s left join t_product p on s.p_oid=p.oid 
+		where 1=1
+		<if test="orderOid != null and orderOid != ''">
+			and s.order_oid = #{orderOid}
+		</if>
+	</select>
+</mapper>

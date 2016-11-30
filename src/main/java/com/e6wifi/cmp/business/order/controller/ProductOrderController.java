@@ -50,7 +50,6 @@ public class ProductOrderController {
 		
 		//保存库存表
 		json.setSuccess(true);
-		
 		return json;
 	}
 	
@@ -96,6 +95,26 @@ public class ProductOrderController {
 				json.setSuccess(false);
 				json.setMessage("删除失败");
 			}
+		} catch (Exception e) {
+			json.setSuccess(false);
+			json.setMessage(e.getMessage());
+		}
+		return json;
+	}
+	
+	/**
+	 * 获取订单所在的
+	 * @param oid
+	 * @return
+	 */
+	@RequestMapping(value="/order/getProductOrder")
+	@ResponseBody
+	public ResponseJson getProductOrderDetail(@RequestParam Long oid) {
+		ResponseJson json = new ResponseJson();
+		try {
+			json.setSuccess(true);
+			ProductOrderEntity entity = orderService.getProductByOrderOid(oid);
+			json.setObj(entity);
 		} catch (Exception e) {
 			json.setSuccess(false);
 			json.setMessage(e.getMessage());

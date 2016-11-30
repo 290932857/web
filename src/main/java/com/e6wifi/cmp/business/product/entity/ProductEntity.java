@@ -65,6 +65,9 @@ public class ProductEntity extends BaseEntity {
 	 * 数量
 	 */
 	private Integer num = 0;
+	
+	//以下字段未对应数据库
+	private Long orderOid;
 
 	public Integer getNum() {
 		return num;
@@ -144,5 +147,13 @@ public class ProductEntity extends BaseEntity {
 
 	public void setAddDate(Date addDate) {
 		this.addDate = addDate;
+	}
+
+	public Long getOrderOid() {
+		return orderOid;
+	}
+
+	public void setOrderOid(Long orderOid) {
+		this.orderOid = orderOid;
 	}
 }

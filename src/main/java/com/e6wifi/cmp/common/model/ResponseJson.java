@@ -1,18 +1,16 @@
 package com.e6wifi.cmp.common.model;
 
-import java.util.List;
-
 /**
  * 返回的json对象
  * 
- * @author Lijiacheng
+ * @author luo
  */
 public class ResponseJson {
 
 	private boolean success;
 	private String message;
 
-	private List<?> objs;
+	private Object obj;
 
 	public boolean isSuccess() {
 		return success;
@@ -30,12 +28,11 @@ public class ResponseJson {
 		this.message = message;
 	}
 
-	public List<?> getObjs() {
-		return objs;
+	public Object getObj() {
+		return obj;
 	}
 
-	public void setObjs(List<?> objs) {
-		this.objs = objs;
+	public void setObj(Object obj) {
+		this.obj = obj;
 	}
-
 }

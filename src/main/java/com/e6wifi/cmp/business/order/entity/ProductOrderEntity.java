@@ -1,7 +1,9 @@
 package com.e6wifi.cmp.business.order.entity;
 
 import java.util.Date;
+import java.util.List;
 
+import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.common.entity.BaseEntity;
 
 /**
@@ -62,6 +64,10 @@ public class ProductOrderEntity extends BaseEntity {
 	 * 订单备注
 	 */
 	private String description;
+	
+	
+	private List<ProductEntity> productEntities;
+	
 	
 	public String getOrderNo() {
 		return orderNo;
@@ -141,5 +147,13 @@ public class ProductOrderEntity extends BaseEntity {
 
 	public void setWarehouseOid(Long warehouseOid) {
 		this.warehouseOid = warehouseOid;
+	}
+
+	public List<ProductEntity> getProductEntities() {
+		return productEntities;
+	}
+
+	public void setProductEntities(List<ProductEntity> productEntities) {
+		this.productEntities = productEntities;
 	}
 }

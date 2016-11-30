@@ -25,6 +25,7 @@ Ext.onReady(function() {
 		},
 		autoLoad : true
 	});
+	
 	orderStore.on("beforeload",function(){
 		var queryParams = {
    			 'orderNo' : Ext.getCmp("orderNo_search").value,
@@ -42,69 +43,28 @@ Ext.onReady(function() {
 		    fields:["state","stateName"]
 		});
 	
-	
-	//按钮
-	var gridbar = Ext.create('Ext.container.ButtonGroup',{
-        width : '80%',
-        items: [{
-            text: '添加',
-            handler : showBatchEdit
-        } , {
-            text: '删除',
-            id: 'delete',
-            disabled : 1,
-            enableToggle:true,
-            handler : function (){
-            	Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-					if (button == "yes") {
-						var records = Ext.getCmp("orderGrid").getSelectionModel().getSelection();
-						//var records = panelGrid.getSelectionModel().getSelection();
-						//获得要删除的元素
-						var ids = []; //要删除的id
-		          		for(var i=0;i<records.length;i++) {
-		          			ids.push(records[i].data.oid);
-		          		}
-						//ajax请求
-		          		Ext.Ajax.request({
-		                     url: '/web/order/deleteProductOrder.do',
-		                     method: "post",
-		                     success: function (response, opts) {
-		                         Ext.MessageBox.hide();
-		                         var json = Ext.JSON.decode(response.responseText);
-		                         if (json.success) {
-		                        	 orderStore.load();
-		                             Ext.Msg.alert('系统提示', "删除成功");
-		                         } else {
-		                             Ext.Msg.alert("系统提示", json.message);
-		                         }
-		                     },
-		                     failure: function () {
-		                         Ext.Msg.alert('系统提示', '系统出错！');
-		                     },
-		                     params: {'params' : ids}
-		                });
-					}
-				});
-            }
-        } , {
-            text: '签收',
-            id: 'sign_in',
-            disabled : 1,
-            enableToggle:true,
-            handler : function() {
-				var records = Ext.getCmp("orderGrid").getSelectionModel().getSelection();
+	var deleteOrderFunction = function (data){
+    	Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+			if (button == "yes") {
+				/* var records = Ext.getCmp("orderGrid").getSelectionModel().getSelection();
+				//var records = panelGrid.getSelectionModel().getSelection();
 				//获得要删除的元素
-          		var oid = records[0].data.oid;
+				var ids = []; //要删除的id
+          		for(var i=0;i<records.length;i++) {
+          			ids.push(records[i].data.oid);
+          		} */
+          		var ids = []; 
+          		ids.push(data.oid);
 				//ajax请求
           		Ext.Ajax.request({
-                     url: '/web/order/signProductOrder.do',
+                     url: '/web/order/deleteProductOrder.do',
                      method: "post",
                      success: function (response, opts) {
                          Ext.MessageBox.hide();
                          var json = Ext.JSON.decode(response.responseText);
                          if (json.success) {
                         	 orderStore.load();
-                             Ext.Msg.alert('系统提示', "签收成功");
+                             Ext.Msg.alert('系统提示', "删除成功");
                          } else {
                              Ext.Msg.alert("系统提示", json.message);
                          }
@@ -112,11 +72,61 @@ Ext.onReady(function() {
                      failure: function () {
                          Ext.Msg.alert('系统提示', '系统出错！');
                      },
-                     params: {'oid' : oid}
+                     params: {'params' : ids}
                 });
-            }
-        },{
+			}
+		});
+    }
+	
+	var signFunction = function(data) {
+		Ext.Msg.confirm("警告", "确定签收吗？", function (button) {
+			if (button == "yes") {
+				//获得要签收的元素
+		  		var oid = data.oid;
+				//ajax请求
+		  		Ext.Ajax.request({
+		             url: '/web/order/signProductOrder.do',
+		             method: "post",
+		             success: function (response, opts) {
+		                 Ext.MessageBox.hide();
+		                 var json = Ext.JSON.decode(response.responseText);
+		                 if (json.success) {
+		                	 orderStore.load();
+		                     Ext.Msg.alert('系统提示', "签收成功");
+		                 } else {
+		                     Ext.Msg.alert("系统提示", json.message);
+		                 }
+		             },
+		             failure: function () {
+		                 Ext.Msg.alert('系统提示', '系统出错！');
+		             },
+		             params: {'oid' : oid}
+		        });
+			}
+		});
+    }
+	
+	//按钮
+	var gridbar = Ext.create('Ext.container.ButtonGroup',{
+        width : '80%',
+        items: [{
+            text: '添加',
+            handler : showBatchEdit,
+            icon: '/web/resources/ext/shared/icons/fam/add.png',
+        } , /* {
+            text: '删除',
+            id: 'delete',
+            disabled : 1,
+            enableToggle:true
+        } , {
+            text: '签收',
+            id: 'sign_in',
+            disabled : 1,
+            enableToggle:true,
+            handler : 
+        }, */{
             text: '过滤',
+            icon: '/web/resources/ext/shared/icons/fam/search.gif',
             handler : function(item, pressed) {
                 var filter1 = Ext.getCmp('faultHistoryGridFilterPanel1');
                 if (!filter1.isVisible()) {
@@ -169,26 +179,43 @@ Ext.onReady(function() {
                  }
              }]
 			}],
-			listeners: {
-    	        selectionchange: function(grid, selection) {
-    	        	if (panelGrid.down('#delete') != null) {
-    	        		panelGrid.down('#delete').setDisabled(selection.length === 0);
-    				}
-    				if (panelGrid.down('#sign_in') != null) {
-    					panelGrid.down('#sign_in').setDisabled(selection.length === 0 || selection.length > 1);
-    				}
-    	    	 }
-    	    },
 			columns : [ {
 				text : '序号',
 				dataIndex : 'id',
-				flex : 1,
 				renderer: function (value, metadata, record, rowIndex) {
                     var currentPage = record.store.currentPage;
                     var pageSize = record.store.pageSize;
                     return (currentPage - 1) * pageSize + rowIndex + 1;
                 } 
 			}, {
+				xtype:'actioncolumn',
+				width: 60,
+				text : '操作',
+				flex : 1,
+				items: [{
+					icon: '/web/resources/ext/shared/icons/fam/edit.png',
+					tooltip : '查看',
+					handler:  function(grid, rowIndex, colIndex) {
+	                    var rec = grid.getStore().getAt(rowIndex);
+	                    showOrderDetail(rec.data);
+					}
+				}, '-',{
+					icon: '/web/resources/ext/shared/icons/fam/ok.png',
+					tooltip : '签收',
+					handler:  function(grid, rowIndex, colIndex) {
+	                    var rec = grid.getStore().getAt(rowIndex);
+	                    //signFunction(rec.data);
+	                    signOrderDialog(rec.data);
+	                }
+				},'-',{
+					icon: '/web/resources/ext/shared/icons/fam/delete.gif',
+					tooltip : '删除',
+					handler:  function(grid, rowIndex, colIndex) {
+	                    var rec = grid.getStore().getAt(rowIndex);
+	                    deleteOrderFunction(rec.data);
+	                }
+				}]
+			} ,{
 				text : '订单号',
 				dataIndex : 'orderNo',
 				flex : 2
@@ -267,8 +294,9 @@ Ext.onReady(function() {
 			url : '/web/provider/getProviderProductList.do',
 		}
 	});
-	 var batch_form, prductSelect;
+	 var batch_form, providerOid, prductSelect;
 	 function showBatchEdit() {
+		 providerOid = "";
 		 productStore.load({params:{'oid' : ''}});
 		 batch_form = Ext.widget('form', {
 	        	requires: [
@@ -307,7 +335,7 @@ Ext.onReady(function() {
                 		listeners: {
                 	        selectionchange: function(grid, selection) {
                 	        	if(selection.length > 0) {
-                	        		var providerOid = selection[0].data.oid;
+                	        		providerOid = selection[0].data.oid;
                 					productStore.load({params:{'oid' : providerOid}});
                 	        	}
                 	        }
@@ -377,7 +405,7 @@ Ext.onReady(function() {
 	                    	    waitTitle:'提示', 
 	                    	    method : 'POST',
 	                    	    url: '/web/order/saveProductOrder.do',
-	                    	    params : {"params" : prductSelect},
+	                    	    params : {"params" : prductSelect, "providerOid" : providerOid},
 	                    	    timeout: 600000,
 	                    	    success: function(form, action) {
 	                    	    	var json = Ext.JSON.decode(action.response.responseText);
@@ -416,6 +444,197 @@ Ext.onReady(function() {
 	            defaultFocus: 'contractNo'
 	        });
 	       batchWin.show();
+		}
+	 
+	 function showOrderDetail(data) {
+		 /* var orderDetailStore;
+		 Ext.Ajax.request({
+			 url : '/web/order/getProductOrder.do',
+			 params: {'oid' : data.oid},
+			 async:false,
+			 success: function(resp,opts) {
+				 var json = Ext.JSON.decode(resp.responseText);
+				 orderDetailStore = new Ext.data.SimpleStore({
+						    data: json.obj.productEntities,
+							fields:['pName', 'type', 'outline', 'packType', 'unitType', 'price', 'num']
+					});
+			 }
+		 }); */
+		 
+		 var orderDetailStore = Ext.create('Ext.data.Store', {
+				fields : [ 'pName', 'type', 'outline', 'packType', 'unitType', 'price', 'num'],
+				remoteSort : false,
+				remoteFilter : true,
+				proxy : {
+					type : 'ajax',
+					url : '/web/order/getProductOrder.do',
+					reader : {
+						type : 'json',
+						rootProperty : 'obj.productEntities',
+						totalProperty : 'obj'
+					}
+				},
+			});
+		 orderDetailStore.load({ params : {'oid' : data.oid}})
+		 
+		 var detailform = Ext.widget('form', {
+	        	requires: [
+	        	           'Ext.grid.*',
+	        	           'Ext.form.*',
+	        	           'Ext.layout.container.Column',
+	        	           'Ext.selection.CellModel',
+	        	           'Ext.data.*'
+	        	       ],
+	            layout: {
+	                type: 'vbox',
+	                align: 'stretch'
+	            },
+	            bodyPadding: 10,
+	            fieldDefaults: {
+	                labelAlign: 'top',
+	                labelStyle: 'font-weight:bold'
+	            },
+	            items: [{
+		                xtype: 'fieldcontainer',
+		                defaultType: 'textfield',
+		                layout: {
+			                type: 'hbox',
+			                align: 'stretch'
+			            },
+		                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '订单号', labelAlign: 'right'},
+		                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '下单日期', labelAlign: 'right'}]
+		        },{
+	                xtype: 'fieldcontainer',
+	                defaultType: 'textfield',
+	                layout: {
+		                type: 'hbox',
+		                align: 'stretch'
+		            },
+	                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '供应商', labelAlign: 'right'}, 
+	                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '联系人', labelAlign: 'right'},
+	                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '联系电话', labelAlign: 'right'}]
+		        },{
+                	xtype: 'panel',
+                	layout: 'hbox',
+                	items : [{
+                		xtype: 'grid',
+                		flex : 2,
+                		height: 300,
+                		store : orderDetailStore,
+                		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
+                		          {text : '产品型号', flex : 1, dataIndex : 'type'},
+                		          {text : '产品外形', flex : 1, dataIndex : 'outline'},
+                		          {text : '包装外形', flex : 1, dataIndex : 'packType'},
+                		          {text : '单位', flex : 1, dataIndex : 'unitType'},
+                		          {text : '单价', flex : 1, dataIndex : 'price'},
+                		          {text : '数量', flex : 1, dataIndex:'num'}],
+                	}]
+                }],
+	            buttons: [{
+	                text: '关闭',
+	                handler: function() {
+	                	orderDetailWin.destroy();
+	                }
+	            }]
+	        });
+	
+	       var orderDetailWin = Ext.widget('window', {
+	            title: '订单详情',
+	            closeAction: 'destroy',
+	            width: 900,
+	            minWidth: 900,
+	            minHeight: 500,
+	            layout: 'fit',
+	            resizable: true,
+	            modal: true,
+	            items: detailform,
+	            defaultFocus: 'contractNo'
+	        });
+	       orderDetailWin.show();
+		}
+	 
+	function signOrderDialog(data) {
+		 
+		 var signForm = Ext.widget('form', {
+	        	requires: [
+	        	           'Ext.grid.*',
+	        	           'Ext.form.*',
+	        	           'Ext.layout.container.Column',
+	        	           'Ext.selection.CellModel',
+	        	           'Ext.data.*'
+	        	       ],
+	            layout: {
+	                type: 'vbox',
+	                align: 'stretch'
+	            },
+	            bodyPadding: 10,
+	            fieldDefaults: {
+	                labelAlign: 'top',
+	                labelStyle: 'font-weight:bold'
+	            },
+	            items: [{
+		                xtype: 'fieldcontainer',
+		                defaultType: 'textfield',
+		                layout: {
+			                type: 'hbox',
+			                align: 'stretch'
+			            },
+		                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '订单号', labelAlign: 'right'},
+		                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '下单日期', labelAlign: 'right'}]
+		        },{
+	                xtype: 'fieldcontainer',
+	                defaultType: 'textfield',
+	                layout: {
+		                type: 'hbox',
+		                align: 'stretch'
+		            },
+	                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '供应商', labelAlign: 'right'}, 
+	                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '联系人', labelAlign: 'right'},
+	                        {xtype : 'textfield', name : 'orderNo', fieldLabel: '联系电话', labelAlign: 'right'}]
+		        },{
+	                xtype: 'fieldcontainer',
+	                defaultType: 'textfield',
+	                layout: {
+		                type: 'hbox',
+		                align: 'stretch'
+		            },
+	                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '送货单号', labelAlign: 'right'}]
+		        },{
+                	xtype: 'panel',
+                	layout: 'hbox',
+                	items : [{
+                		xtype: 'grid',
+                		flex : 2,
+                		height: 300,
+                		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
+                		          {text : '产品型号', flex : 1, dataIndex : 'type'},
+                		          {text : '产品外形', flex : 1, dataIndex : 'outline'},
+                		          {text : '包装外形', flex : 1, dataIndex : 'packType'},
+                		          {text : '单位', flex : 1, dataIndex : 'unitType'},
+                		          {text : '单价', flex : 1, dataIndex : 'price'},
+                		          {text : '数量', flex : 1, dataIndex:'num'}],
+                	}]
+                }],
+	            buttons: [{
+	                text: '关闭',
+	                handler: function() {
+	                	signOrderWin.destroy();
+	                }
+	            }]
+	        });
+	
+	       var signOrderWin = Ext.widget('window', {
+	            title: '订单签收',
+	            closeAction: 'destroy',
+	            width: 900,
+	            minWidth: 900,
+	            minHeight: 500,
+	            layout: 'fit',
+	            resizable: true,
+	            modal: true,
+	            items: signForm
+	        });
+	       signOrderWin.show();
 		}
 });
 </script>
