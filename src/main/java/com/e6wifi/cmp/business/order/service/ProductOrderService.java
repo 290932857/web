@@ -146,17 +146,29 @@ public class ProductOrderService {
 	 * @return
 	 * @throws Exception
 	 */
-	public ProductOrderEntity getProductByOrderOid(Long oid) throws Exception {
+	public List<ProductEntity> getProductByOrderOid(Long oid) throws Exception {
 		if(oid == null) {
 			throw new Exception("oid为空");
 		}
-		ProductOrderEntity entity  = getProductOrder(oid);
+		List<ProductEntity> list = productService.getProductByOrderOid(oid);
+		return list;
+	}
+	
+	/**
+	 * 通过订单ID查询产品信息
+	 * @param oid
+	 * @return
+	 * @throws Exception
+	 */
+	public ProductOrderEntity getOrderByOrderOid(Long oid) throws Exception {
+		if(oid == null) {
+			throw new Exception("oid为空");
+		}
+		ProductOrderEntity entity = getProductOrder(oid);
 		if(entity != null) {
 			List<ProductEntity> list = productService.getProductByOrderOid(oid);
 			entity.setProductEntities(list);
-			return entity;
 		}
-		
-		throw new Exception("未查询到该订单");
+		return entity;
 	}
 }

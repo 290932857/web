@@ -10,7 +10,7 @@ public class ResponseJson {
 	private boolean success;
 	private String message;
 
-	private Object obj;
+	private Object data;
 
 	public boolean isSuccess() {
 		return success;
@@ -28,11 +28,11 @@ public class ResponseJson {
 		this.message = message;
 	}
 
-	public Object getObj() {
-		return obj;
+	public Object getData() {
+		return data;
 	}
 
-	public void setObj(Object obj) {
-		this.obj = obj;
+	public void setData(Object data) {
+		this.data = data;
 	}
 }

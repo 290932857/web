@@ -21,7 +21,7 @@
 	<select id="getProductOrder" resultType="com.e6wifi.cmp.business.order.entity.ProductOrderEntity" 
 			parameterType="long">
 		select
-			o.oid, order_no as orderNo, provider_oid as providerOid, order_date as orderDate, state, description, o.create_user_id, o.create_time, u.uid, u.user_name, 
+			o.oid, order_no as orderNo, provider_oid as providerOid, warehouse_oid as warehouseOid, order_date as orderDate, state, description, o.create_user_id, o.create_time, u.uid, u.user_name, 
 			p.name as providerName, p.linkman as providerLinkman, p.linkman_telphone as providerTelphone, p.fax as providerFax
 		from 
 			t_order o left join t_sys_user u on o.create_user_id=u.uid

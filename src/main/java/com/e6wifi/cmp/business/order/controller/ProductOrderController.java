@@ -1,5 +1,7 @@
 package com.e6wifi.cmp.business.order.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.e6wifi.cmp.business.order.entity.ProductOrderEntity;
 import com.e6wifi.cmp.business.order.service.ProductOrderService;
+import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.common.model.Page;
 import com.e6wifi.cmp.common.model.ResponseJson;
 
@@ -103,18 +106,38 @@ public class ProductOrderController {
 	}
 	
 	/**
-	 * 获取订单所在的
+	 * 获取单个订单信息
 	 * @param oid
 	 * @return
 	 */
 	@RequestMapping(value="/order/getProductOrder")
 	@ResponseBody
+	public ResponseJson getProductOrder(@RequestParam Long oid) {
+		ResponseJson json = new ResponseJson();
+		try {
+			json.setSuccess(true);
+			ProductOrderEntity entity = orderService.getProductOrder(oid);
+			json.setData(entity);
+		} catch (Exception e) {
+			json.setSuccess(false);
+			json.setMessage(e.getMessage());
+		}
+		return json;
+	}
+	
+	/**
+	 * 获取订单中的所有产品
+	 * @param oid
+	 * @return
+	 */
+	@RequestMapping(value="/order/getOrderForProduct")
+	@ResponseBody
 	public ResponseJson getProductOrderDetail(@RequestParam Long oid) {
 		ResponseJson json = new ResponseJson();
 		try {
 			json.setSuccess(true);
-			ProductOrderEntity entity = orderService.getProductByOrderOid(oid);
-			json.setObj(entity);
+			List<ProductEntity> entity = orderService.getProductByOrderOid(oid);
+			json.setData(entity);
 		} catch (Exception e) {
 			json.setSuccess(false);
 			json.setMessage(e.getMessage());
