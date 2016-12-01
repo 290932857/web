@@ -37,4 +37,12 @@ public class ProviderService {
 		}
 		return new ArrayList<ProductEntity>();
 	}
+	
+	public List<ProductEntity> getProviderList() {
+		List<ProductEntity> list = providerDao.getProviderList();
+		if(list != null && !list.isEmpty()) {
+			return list;
+		}
+		return new ArrayList<ProductEntity>();
+	}
 }

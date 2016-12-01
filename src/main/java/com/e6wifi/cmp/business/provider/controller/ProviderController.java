@@ -13,6 +13,7 @@ import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.business.provider.entity.ProviderEntity;
 import com.e6wifi.cmp.business.provider.service.ProviderService;
 import com.e6wifi.cmp.common.model.Page;
+import com.e6wifi.cmp.common.model.ResponseJson;
 
 @Controller
 public class ProviderController {
@@ -70,5 +71,15 @@ public class ProviderController {
 			return providerService.getProviderProductList(query);
 		}
 		return new ArrayList<ProductEntity>();
+	}
+	
+	@RequestMapping("/provider/getProviderList")
+	@ResponseBody
+	public ResponseJson getProviderList() {
+		ResponseJson json = new ResponseJson();
+		List<ProductEntity> list = providerService.getProviderList();
+		json.setSuccess(true);
+		json.setData(list);
+		return json;
 	}
 }

@@ -48,9 +48,7 @@ public class ProductOrderController {
 	public ResponseJson saveProductOrder(ProductOrderEntity entity, @RequestParam String params) {
 		ResponseJson json = new ResponseJson();
 		//保存订单
-		Long orderOid = orderService.insertOrder(entity, params);
-		System.out.println(orderOid);
-		
+		orderService.insertOrder(entity, params);
 		//保存库存表
 		json.setSuccess(true);
 		return json;
@@ -67,12 +65,12 @@ public class ProductOrderController {
 		ResponseJson json = new ResponseJson();
 		try {
 			entity.setState(2);
-			long num = orderService.updateProductOrderState(entity);
+			long num = orderService.signProductOrder(entity);
 			if(num > 0) {
 				json.setSuccess(true);
 			} else {
 				json.setSuccess(false);
-				json.setMessage("签收失败");
+				json.setMessage("签收入库失败");
 			}
 		} catch (Exception e) {
 			json.setSuccess(false);

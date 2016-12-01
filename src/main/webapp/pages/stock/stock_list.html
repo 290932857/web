@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="../../resources/ext/classic/theme-neptune/resources/theme-neptune-all.css" />
+<script type="text/javascript" src="../../resources/ext/ext-bootstrap.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+Ext.onReady(function() {
+	var store = Ext.create('Ext.data.Store', {
+		fields : [ 'oid', 'providerName', 'productName', 'productType', 'productOutline', 'productPackType', 'warehouseName', 'num', 'addDate', 'productPrice', 'totalPrice'],
+		pageSize : 20,
+		remoteSort : false,
+		remoteFilter : true,
+		proxy : {
+			type : 'ajax',
+			url : '/web/stock/getStockList.do',
+			reader : {
+				type : 'json',
+				rootProperty : 'list',
+				totalProperty : 'rowCount'
+			}
+		},
+		autoLoad : true
+	});
+	var warehouseStore = Ext.create('Ext.data.Store', {
+		fields : [ 'oid', 'name'],
+		proxy : {
+			type : 'ajax',
+			url : '/web/warehouse/getWarehouse.do',
+			reader : {
+				type : 'json',
+				rootProperty : 'data'
+			}
+		}
+	});
+	var providerStore = Ext.create('Ext.data.Store', {
+		fields : [ 'oid', 'name'],
+		proxy : {
+			type : 'ajax',
+			url : '/web/provider/getProviderList.do',
+			reader : {
+				type : 'json',
+				rootProperty : 'data',
+			}
+		},
+		autoLoad : true
+	});
+	var gridbar = Ext.create('Ext.container.ButtonGroup',{
+        items: [{
+            text: '过滤',
+            icon: '/web/resources/ext/shared/icons/fam/search.gif',
+            handler : function(item, pressed) {
+                var filter1 = Ext.getCmp('faultHistoryGridFilterPanel1');
+                if (!filter1.isVisible()) {
+                    filter1.setVisible(true);
+                } else {
+                    filter1.setVisible(false);
+                }
+			}
+        }],
+        style: {
+            borderColor: 'white'
+        }
+    });
+	
+	store.on("beforeload",function(){
+		var queryParams = {
+			'providerOid' : Ext.getCmp("provider_search").value,
+            'warehouseOid' : Ext.getCmp("warehouse_search").value,
+            'productName' : encodeURI(Ext.getCmp("productName_search").value)
+		};
+	    Ext.apply(store.proxy.extraParams, queryParams);
+	});
+	var grid = Ext.create('Ext.grid.Panel', {
+		title : '库存信息列表',
+		width: '100%',
+		xtype : 'grid',
+		flex : 1,
+		margin : '0 0 0 0 ',
+		store : store,
+		listeners: {  
+	        'beforeload': function (store, op, options) {  
+	            var params = {  
+	            	con_id : contract_id//参数   
+	            };  
+	            Ext.apply(store.proxy.extraParams, params);   
+	        }  
+	    },
+	    viewConfig:{  
+            enableTextSelection:true  
+        },
+		columns : [{
+			text : '序号',
+			dataIndex : 'id',
+			renderer: function (value, metadata, record, rowIndex) {
+                var currentPage = record.store.currentPage;
+                var pageSize = record.store.pageSize;
+                return (currentPage - 1) * pageSize + rowIndex + 1;
+            } 
+		},{
+			header : '供应商',
+			dataIndex : 'providerName',
+			flex : 1
+		},{
+			header : '入库日期',
+			flex : 1,
+			dataIndex : 'addDate',
+			renderer : function(value) {
+				if(null != value){ 
+			        return Ext.Date.format(new Date(value), 'Y-m-d H:i:s'); 
+			    }else{ 
+			        return null; 
+			    } 
+		 	},
+		},{
+			header : '产品名称',
+			flex : 1,
+			dataIndex : 'productName'
+		},{
+			header : '产品型号',
+			dataIndex : 'productType',
+			flex : 1
+		}, {
+			header : '产品外形',
+			dataIndex : 'productOutline',
+			flex : 1
+		}, {
+			header : '数量',
+			flex : 1,
+			dataIndex : 'num'
+		}, {
+			header : '包装方式',
+			flex : 1,
+			dataIndex : 'productPackType'
+		}, {
+			header : '含税单价',
+			flex : 1,
+			dataIndex : 'productPrice'
+		}, {
+			header : '总金额',
+			flex : 1,
+			dataIndex : 'totalPrice'
+		}, {
+			header : '仓库名称',
+			dataIndex : 'warehouseName',
+			flex : 1
+		}],
+		dockedItems : [gridbar,{
+			id : 'faultHistoryGridFilterPanel1',
+			xtype : 'toolbar',
+			dock : 'top',
+			hidden : true,
+			items : [{xtype: 'combobox',width:100, id : 'provider_search', store: providerStore, valueField: 'oid',displayField: 'name', emptyText: '供应商选择'},
+			         {xtype: 'combobox',width:100, id : 'warehouse_search', store: warehouseStore, valueField: 'oid',displayField: 'name', emptyText: '仓库选择'},
+			         {xtype: 'textfield',width:100, id : 'productName_search',  emptyText: '产品名称'},
+						"-",{text : '搜索', handler : function(){
+					  store.load({
+                         params : {
+                             'providerOid' : Ext.getCmp("provider_search").value,
+                             'warehouseOid' : Ext.getCmp("warehouse_search").value,
+                             'productName' : encodeURI(Ext.getCmp("productName_search").value)
+                         }
+                	 });
+             }},{text : '重置', handler : function(){
+                 Ext.getCmp("provider_search").setValue("");
+                 Ext.getCmp("warehouse_search").setValue("");
+                 Ext.getCmp("productName_search").setValue("");
+                 orderStore.load({
+                     params : {
+                         'providerOid' : "",
+                         'warehouseOid' : "",
+                         'productName' : ""
+                     }
+                 });
+             }
+         }]
+		}],
+		//grid分页显示
+		bbar : new Ext.PagingToolbar({
+			store : store,
+			pageSize : 20,
+			displayMsg : '显示 {0} - {1} 条，共计 {2} 条',
+			emptyMsg : "没有相关记录",
+			beforePageText:"第",
+			afterPageText:"/　{0}页",
+			firstText:"首页",
+			prevText:"上一页",
+			nextText:"下一页",
+			lastText:"尾页",
+			refreshText:"刷新",
+			flex : 1,
+			inputItemWidth : 45,
+			displayInfo : true
+		}),
+		renderTo : Ext.getBody()
+	});
+	
+	grid.getSelectionModel().on('selectionchange',
+		function(selModel, selections) {
+			
+		}
+    );
+})
+</script>
+</body>
+</html>

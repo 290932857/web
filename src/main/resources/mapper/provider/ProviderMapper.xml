@@ -27,4 +27,9 @@
 			and p.oid=#{oid}
 		</if>
 	</select>
+	
+	<select id="getProviderList" resultType="com.e6wifi.cmp.business.provider.entity.ProviderEntity" 
+			parameterType="com.e6wifi.cmp.business.provider.entity.ProviderEntity">
+		select oid, name, address, linkman, linkman_telphone as linkmanTelphone, fax from t_provider
+	</select>
 </mapper>

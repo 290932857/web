@@ -1,6 +1,7 @@
 package com.e6wifi.cmp.business.order.service;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.e6wifi.cmp.business.order.dao.ProductOrderDao;
+import com.e6wifi.cmp.business.order.entity.ProductOrderDtEntity;
 import com.e6wifi.cmp.business.order.entity.ProductOrderEntity;
 import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.business.product.service.ProductService;
@@ -56,15 +58,14 @@ public class ProductOrderService {
 				return null;
 			}
 			Gson gson = new Gson();
-			Type type = new TypeToken<List<StockEntity>>(){}.getType();
-			List<StockEntity> stockEntities = gson.fromJson(params, type);
-			if(stockEntities != null && !stockEntities.isEmpty()) {
-				for(StockEntity stockEntity : stockEntities) {
-					stockEntity.setOrderOid(entity.getOid());
-					stockEntity.setAddDate(new Date());
+			Type type = new TypeToken<List<ProductOrderDtEntity>>(){}.getType();
+			List<ProductOrderDtEntity> orderDtEntities = gson.fromJson(params, type);
+			if(orderDtEntities != null && !orderDtEntities.isEmpty()) {
+				for(ProductOrderDtEntity dtEntity : orderDtEntities) {
+					dtEntity.setOrderOid(entity.getOid());
 				}
 			}
-			stockService.insertOrUpdateStock(stockEntities);
+			productOrderDao.insertOrderDt(orderDtEntities);
 			return entity.getOid();
 		}
 		return null;
@@ -89,10 +90,47 @@ public class ProductOrderService {
 			
 			//删除订单
 			try {
-				stockService.deleteByOrderOid(oid);
+				productOrderDao.deleteOrderDtByOrderOid(oid);
 				productOrderDao.deleteOrder(oid);
 			} catch (Exception e) {
 				throw new Exception("删除订单失败");
+			}
+		}
+		return 1l;
+	}
+	
+	/**
+	 * 签收订单
+	 * @return
+	 * @throws Exception
+	 */
+	public Long signProductOrder(ProductOrderEntity orderEntity) throws Exception {
+		//判断订单是否签收
+		ProductOrderEntity dbEntity = productOrderDao.getProductOrder(orderEntity.getOid());
+		
+		//已签收订单无法再次签收
+		if(dbEntity.getState() == 2 || dbEntity.getState() == 3) {
+			throw new Exception("该订单已经签收入库或者过期无法再次签收入库");
+		}
+		
+		//更新订单状态
+		long num = updateProductOrderState(orderEntity);
+		if(num > 0) {
+			//添加库存表
+			List<ProductOrderDtEntity> productEntities = productOrderDao.getProductOrderDts(orderEntity.getOid());
+			if(productEntities != null && productEntities.size() > 0) {
+				List<StockEntity> entities = new ArrayList<StockEntity>();
+				for(ProductOrderDtEntity dtEntity : productEntities) {
+					StockEntity stock = new StockEntity();
+					stock.setOrderOid(orderEntity.getOid());
+					stock.setProductOid(dtEntity.getProductOid());
+					stock.setProviderOid(dbEntity.getProviderOid());
+					stock.setWarehouseOid(dbEntity.getWarehouseOid());
+					stock.setNum(dtEntity.getNum());
+					stock.setAddDate(new Date());
+					entities.add(stock);
+				}
+				stockService.insertStocks(entities);
 			}
 		}
 		return 1l;
@@ -106,14 +144,6 @@ public class ProductOrderService {
 	public Long updateProductOrderState(ProductOrderEntity orderEntity) throws Exception {
 		if(orderEntity == null) {
 			throw new Exception("订单信息为空");
-		}
-		
-		//判断订单是否已经签收
-		ProductOrderEntity dbEntity = productOrderDao.getProductOrder(orderEntity.getOid());
-		
-		//已签收订单无法删除
-		if(dbEntity.getState() == 2 || dbEntity.getState() == 3) {
-			throw new Exception("该订单已经签收或者过期无法再次签收");
 		}
 		
 		long num = productOrderDao.updateOrder(orderEntity);

@@ -12,4 +12,6 @@ public interface ProviderDao {
 	public List<ProductEntity> getProviderProductPage(ProviderEntity query);
 	
 	public List<ProductEntity> getProviderProductList(ProviderEntity query);
+	
+	public List<ProductEntity> getProviderList();
 }

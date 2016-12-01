@@ -6,17 +6,25 @@ import org.apache.ibatis.annotations.Param;
 
 import com.e6wifi.cmp.business.stock.entity.StockEntity;
 
+/**
+ * 
+ * @author luo
+ *
+ */
 public interface StockDao {
+	
+	
+	public List<StockEntity> getStockPage(StockEntity query);
 
 	/**
-	 * 
+	 * 添加库存
 	 * @param stockEntities
 	 * @return
 	 */
-	public Long insertOrUpdateStock(List<StockEntity> stockEntities);
+	public Long insertStocks(List<StockEntity> stockEntities);
 	
 	/**
-	 * 通过订单号删除的订单详细数据
+	 * 通过订单号删除的库存
 	 * @param orderOid
 	 * @return
 	 */

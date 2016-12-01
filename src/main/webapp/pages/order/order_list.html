@@ -99,7 +99,7 @@ Ext.onReady(function() {
     }
 	
 	var signFunction = function(data) {
-		Ext.Msg.confirm("警告", "确定签收吗？", function (button) {
+		Ext.Msg.confirm("警告", "确定签收并且入库吗？", function (button) {
 			if (button == "yes") {
 				//获得要签收的元素
 		  		var oid = data.oid;
@@ -112,7 +112,7 @@ Ext.onReady(function() {
 		                 var json = Ext.JSON.decode(response.responseText);
 		                 if (json.success) {
 		                	 orderStore.load();
-		                     Ext.Msg.alert('系统提示', "签收成功");
+		                     Ext.Msg.alert('系统提示', "签收入库成功");
 		                 } else {
 		                     Ext.Msg.alert("系统提示", json.message);
 		                 }
@@ -384,7 +384,7 @@ Ext.onReady(function() {
                 	        selectionchange: function(grid, selection) {
                 	         	prductSelect = "[";
                 	    		for(var i = 0 ; i < selection.length; i++) {
-                	    			prductSelect += "{'pOid':" + selection[i].data.oid + ", 'num' :" + selection[i].data.num +"}";
+                	    			prductSelect += "{'productOid':" + selection[i].data.oid + ", 'num' :" + selection[i].data.num +"}";
                 	    			if(i != selection.length -1) {
                 	    				prductSelect += ","
                 	    			}

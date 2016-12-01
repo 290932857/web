@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.e6wifi.cmp.business.stock.dao.StockDao">
-	<insert id="insertOrUpdateStock" parameterType="java.util.List">
-		insert into t_stock(order_oid, p_oid, num, add_date) values
+
+	<select id="getStockPage" resultType="com.e6wifi.cmp.business.stock.entity.StockEntity" 
+			parameterType="com.e6wifi.cmp.business.stock.entity.StockEntity">
+		select 
+			s.oid, s.num,  p.name as providerName, s.add_date as addDate, pd.p_name as productName, pd.type as productType, 
+			pd.outline as productOutline, pd.pack_type as productPackType, w.name as warehouseName, pd.price as productPrice,  pd.price * s.num as totalPrice
+		from 
+			t_stock s left join t_provider p on s.provider_oid = p.oid left join t_warehouse w on s.warehouse_oid=w.oid left join t_product pd on s.product_oid = pd.oid
+		where 1=1
+		<if test="productName != null and productName != ''">
+			and pd.p_name like CONCAT('%',#{productName},'%')
+		</if>
+		<if test="providerOid != null and providerOid != ''">
+			and s.provider_oid = #{providerOid}
+		</if>
+		<if test="warehouseOid != null and warehouseOid != ''">
+			and s.warehouse_oid = #{warehouseOid}
+		</if>
+	</select>
+	
+	<insert id="insertStocks" parameterType="java.util.List">
+		insert into t_stock(order_oid, product_oid, provider_oid, warehouse_oid, num, add_date) values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.orderOid},#{item.pOid},#{item.num},#{item.addDate})
+			(#{item.orderOid},#{item.productOid},#{item.providerOid},#{item.warehouseOid},#{item.num},#{item.addDate})
 		</foreach>
 	</insert>
 	
