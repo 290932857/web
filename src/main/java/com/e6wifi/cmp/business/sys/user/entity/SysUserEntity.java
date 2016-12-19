@@ -1,4 +1,4 @@
-package com.e6wifi.cmp.business.sys.user.model;
+package com.e6wifi.cmp.business.sys.user.entity;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ import java.util.Date;
  * 
  * @author Lijiacheng
  */
-public class SysUser {
+public class SysUserEntity {
 
 	private Integer userId;
 	private String userName;

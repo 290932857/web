@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>系统菜单</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" type="text/css" href="../../../resources/ext/classic/theme-neptune/resources/theme-neptune-all.css" />
+<script type="text/javascript" src="../../../resources/ext/ext-bootstrap.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){  
+	
+	Ext.tip.QuickTipManager.init();
+	Ext.require(['Ext.data.*', 'Ext.tree.*']);
+	var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>', win, form;
+	
+    var store = Ext.create('Ext.data.TreeStore', {
+        autoLoad : true,  
+        fields : ["name","reid","path","parentid","sort"],
+        proxy : {  
+                type : 'ajax',  
+                url : '/web/sys/menu/getChildResources.do',//请求  
+                reader : {  
+                    type : 'json',  
+                    rootProperty : 'data'//数据  
+                },  
+                //传参  
+                extraParams : {  
+                	parentId : 0
+                }  
+            },  
+        root : {  
+            name : '系统菜单',  
+            expanded : true           
+        }, 
+        folderSort: true,
+        listeners : {  
+            'nodebeforeexpand' : function(node, eOpts){  
+        		//点击父亲节点的菜单会将节点的id通过ajax请求，将到后台 
+        		if(node.data.reid) {
+			        this.proxy.extraParams.parentId = node.raw.reid;
+        		}
+            } 
+        }
+    });  
+    
+  //这里是菜单的定义
+  	var path,tid,text,parentid = "";
+    var menu = Ext.create('Ext.menu.Menu', {
+        id: 'mainMenu',
+        style: {
+            overflow: 'visible'
+        },
+        items: [
+            {
+                text: '兄弟节点',
+   				icon: '/web/resources/ext/shared/icons/fam/add.png',
+                handler: function (cm, color) {
+			    	var a = Ext.getCmp('tree').getSelectionModel().getSelection();
+			    	if (a == "") {
+						Ext.Msg.alert("提示","请选择菜单");
+						return;
+					}
+			    	parentid = a[0].data.parentid;
+			        addBrotherGrade(parentid,"兄弟");
+			    }
+            }, {
+                text: '孩子节点',
+    			icon: '/web/resources/ext/shared/icons/fam/add.png',
+                handler: function (dp, date) {
+                    var a = Ext.getCmp('tree').getSelectionModel().getSelection();
+					if (a == "") {
+						Ext.Msg.alert("提示","请选择菜单");
+						return;
+					}
+					parentid = a[0].data.reid;
+					addBrotherGrade(parentid,"孩子");
+                }
+            }, {
+                text: '删除',
+    			icon: '/web/resources/ext/shared/icons/fam/delete.gif',
+                handler: function (cm, color) {
+                    var a = Ext.getCmp('tree').getSelectionModel().getSelection();
+					if (a == "") {
+						Ext.Msg.alert("提示","请选择菜单");
+						return;
+					}
+					tid = a[0].data.reid;
+					deleteGrade(tid);
+                }
+            }, {
+                text: '编辑',
+				icon: '/web/resources/ext/shared/icons/fam/edit.png',
+	            handler: function (cm, color) {
+	                var a = Ext.getCmp('tree').getSelectionModel().getSelection();
+					if (a == "") {
+						Ext.Msg.alert("提示","请选择菜单");
+						return;
+					}
+					addBrotherGrade();
+				    form.loadRecord(a[0]);
+             	}
+        	}
+        ]
+    });
+  
+  //定义右键菜单
+   Ext.getDoc().on('contextmenu', function (e, o) {
+        e.preventDefault();
+        menu.showAt(e.getXY());
+        //第二种写法：
+        //e.stopEvent();
+        //menu.showAt([e.getPageX(), e.getPageY()]);
+    }); 
+  
+   /*  var el = Ext.get("menu");  
+    el.on("click",function(e){  
+        //menu.showAt(e.getXY());//作用于该位置  
+        //menu.show(this);//作用于元素上  
+        //e.getXY();//得到事件触发的坐标  
+    }) */
+    
+    
+    updateRecord = function(parentId, val){
+    	Ext.Ajax.request({  
+			url: '/web/sys/updateUserPermissions.do',  
+            method: 'POST',  
+            params: {
+            	reid: parentId,
+            	checked: val
+            },  
+            success: function(response) {   
+            	//store.load();
+            },
+            failure: function() {   
+                Ext.MessageBox.alert('<s:text name="com.title.notice"/>', '服务器错误');  
+            }  
+		});
+    }
+    
+    parentnode = function(node) {
+   	    if (node.parentNode != null) {
+   	        if (nodep(node.parentNode)) {
+   	            node.parentNode.set('checked', true);
+   	        } else {
+   	            node.parentNode.set('checked', false);
+   	        }
+   	        parentnode(node.parentNode);
+   	    }
+   	};
+   		
+   	// 选中父节点时选中下面所有已展开的子节点
+   	checkHandler = function(recordIndex, value,val) {
+   		
+   		this.set(recordIndex.dataIndex, value,val);
+   		for ( var i = 0; i < this.childNodes.length; i++) {
+   			//updateRecord(this.childNodes[i].data.tid,Ext.getCmp('role').getValue(),val); 
+   			checkHandler.apply(this.childNodes[i], [ recordIndex, value,val ]);
+   		}
+   	};
+   	
+   	// 选中子节点时使父机构选中
+   	var setParentChecked = function(node, recordIndex,val) {
+   		if (node.parentNode.data.parentId) {
+   			node = node.parentNode;
+
+   			node.set(recordIndex.dataIndex, 1);
+   			//updateRecord(node.data.tid, Ext.getCmp('role').getValue(),1); 
+   			setParentChecked(node, recordIndex,1);
+   		}
+   	};
+   	
+   	addBrotherGrade = function(parentid, text) {
+   		form = Ext.widget('form', {
+        	requires: [
+        	           'Ext.grid.*',
+        	           'Ext.form.*',
+        	           'Ext.layout.container.Column'
+        	       ],
+            layout: {
+                type: 'vbox'
+            },
+            border: true,
+            bodyPadding: 10,
+            fieldDefaults: {
+                labelAlign: 'left',
+                labelStyle: 'font-weight:bold'
+            },
+            items: [{
+                xtype: 'fieldcontainer',
+                layout: 'vbox',
+                defaultType: 'textfield',
+                fieldDefaults: {
+                    labelAlign: 'left'
+                },
+                
+                items: [{
+                    name: 'reid',
+                    xtype: 'hiddenfield',
+                    fieldLabel: 'id'
+                }, {
+                    name: 'parentid',
+                    fieldLabel: '父节点id',
+                    xtype: 'hiddenfield',
+                    value:parentid
+                },{
+                    flex: 1,
+                    name: 'name',
+                    fieldLabel: '菜单名称',
+                    margins: '0 5 0 0',
+                    allowBlank: false
+                }, {
+                	flex: 1,
+                    name: 'path',
+                    fieldLabel: '菜单路径',
+                    margins: '0 5 0 0'
+                }, {
+                	flex: 1,
+                	xtype : 'numberfield',
+             		decimalPrecision: 1,
+             	    allowDecimals: true,
+                    name: 'sort',
+                    fieldLabel: '菜单序号',
+                    margins: '0 5 0 0'
+                }]
+            }],
+           
+            buttons: [{
+                text: '取消',
+                handler: function() {
+                	this.up('form').getForm().reset();
+                    win.destroy();
+                }
+            }, {
+                text: '保存',
+                handler: function() {
+                    if (this.up('form').getForm().isValid()) {
+                    	this.up('form').getForm().submit({
+                    	    clientValidation: true,
+                    	    waitMsg:'正在保存数据，请稍候。', 
+                    	    waitTitle:'提示', 
+                    	    url: '/web/sys/saveOrUpdateResources.do',
+                    	    success: function(form, action) {
+                    	       Ext.Msg.alert('提示', '保存成功');
+                    	       store.load({params: {parentId : 0}});
+                    	       form.reset();
+   		                       win.destroy();
+                    	    },
+                    	    failure: function(form, action) {
+                    	    	var json = Ext.JSON.decode(action.response.responseText);
+                    	    	if(json != "" && json != "[]" && json !="[null]" && json != null){
+                    	    		Ext.Msg.alert("提示", json.message);
+                    	    		return;
+                    	    	}
+                    	        switch (action.failureType) {
+                    	            case Ext.form.action.Action.CLIENT_INVALID:
+                    	                Ext.Msg.alert('失败', '服务器异常1');
+                    	                break;
+                    	            case Ext.form.action.Action.CONNECT_FAILURE:
+                    	                Ext.Msg.alert('失败', '服务器异常2');
+                    	                break;
+                    	            case Ext.form.action.Action.SERVER_INVALID:
+                    	                Ext.Msg.alert('失败', '服务器异常3');
+                    	       }
+                    	    }
+                    	});
+                    }
+                }
+            }]
+        });
+		if (text == undefined || text == 'undefined')
+			text = '编辑当前';
+		else 
+			text = '添加' + text;
+       var win = Ext.widget('window', {
+            title: text+'节点',
+            closeAction: 'destroy',
+            width: 350,
+            minWidth: 300,
+            minHeight: 200,
+            layout: 'fit',
+            resizable: true,
+            modal: true,
+            items: form,
+            defaultFocus: 'name'
+        });
+       win.show();
+   	}
+   	
+   	deleteGrade = function(reid) {
+   		Ext.MessageBox.confirm("标题", "你确定要删除吗？", function (btn) {
+          	if(btn == 'yes') {
+          		Ext.Ajax.request({
+          		    url: '/web/sys/delResources.do',
+          		    params: {
+          		        reid: reid
+          		    },
+          		    success: function(response){
+          		    	var json = Ext.JSON.decode(response.responseText);
+          		    	if(json.success == true) {
+          		    		Ext.Msg.alert("提示", "删除成功");
+          		    		store.load({params: {parentId : 0}});
+          		    	} else {
+          		    		Ext.Msg.alert("提示", json.message);
+          		    	}
+          		    }
+          		});
+          	}
+          });
+   	}
+    	
+    	
+    var me = this;
+   	var selectRecord = null;
+   	var keyRecord = new Array();
+   	var policyRecord = new Array();
+	
+    var reid;
+    var mytree = new Ext.tree.Panel({  
+        renderTo : Ext.get('menu'),  
+        title : '菜单管理',  
+        id: 'tree',
+        store : store ,
+        height: document.body.scrollHeight,
+        listeners:{
+			beforeitemmouseenter : function(view, record, item, index, e, o) {
+				// 记录下传给CheckColumn中的监听使用
+				store.currentRecord = record;
+				// 记录到该页面中使用
+				selectRecord = record;
+			},
+			scrollershow : function(scroller) {
+				if (scroller && scroller.scrollEl) {
+					scroller.clearManagedListeners();
+					scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller);
+				}
+			}
+        },
+        columns: [{
+            xtype: 'treecolumn', //this is so we know which column will show the tree
+            text: '菜单名称',
+            width: 350,
+            sortable: true,
+            dataIndex: 'name',
+            renderer:function(val, m, rec) { 
+            	reid = rec.data.tid;
+            	return rec.data.name;
+           	}
+        }],
+        tbar: [{
+			text : '全部收起',
+			icon: '/web/resources/ext/shared/icons/fam/up.png',
+			handler : function(){
+				store.load({
+					params: {
+						parentId : 0
+	                }
+				});
+			}
+		}, {
+			text : '全部展开',
+			icon: '/web/resources/ext/shared/icons/fam/bullet_toggle_plus.png',
+			handler : function(){
+				mytree.expandAll();
+			}
+		}],
+		bbar: ['<span style="color:red">提示：选择菜单右键进行编辑</span>']
+    });  
+    
+    mytree.expandAll();
+});  
+</script>
+</head>
+<body>
+	<div id="menu"></div>
+</body>
+</html>

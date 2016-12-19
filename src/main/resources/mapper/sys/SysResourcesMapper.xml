@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.e6wifi.cmp.business.sys.menu.dao.SysResourcesMapper">
-	<resultMap id="BaseResultMap" type="com.e6wifi.cmp.business.sys.menu.model.SysResources">
+	<resultMap id="BaseResultMap" type="com.e6wifi.cmp.business.sys.menu.entity.SysResourceEntity">
 		<id column="reid" property="reid" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="CHAR" />
 		<result column="breadcrub" property="breadcrub" jdbcType="VARCHAR" />
@@ -27,4 +27,23 @@
 		ORDER BY
 			r.sort, r.reid
 	</select>
+	
+	<select id="getChildResources" resultType="com.e6wifi.cmp.business.sys.menu.entity.SysResourceEntity">
+		SELECT r.reid,	r. name AS text, r. NAME AS NAME, r.path,	r.parentid,	r.sort,	r.type
+		FROM 
+			t_sys_resources r  WHERE r.parentid = #{parentId} AND r.type = 0 ORDER BY r.sort
+	</select>
+	
+	<insert id="saveResources" parameterType="com.e6wifi.cmp.business.sys.menu.entity.SysResourceEntity" useGeneratedKeys="true" keyProperty="reid">
+		insert into t_sys_resources(name, breadcrub, path, parentid, type, sort, dateline) 
+	 	 values(#{name}, #{name}, #{path}, #{parentid}, #{type}, #{sort}, sysdate())
+	</insert>
+	
+	<update id="updateResources" parameterType="com.e6wifi.cmp.business.sys.menu.entity.SysResourceEntity">
+		update t_sys_resources set name= #{name}, breadcrub= #{name}, path=#{path}, sort=#{sort} where reid=#{reid}
+	</update>
+	
+	<delete id="deleteResources" parameterType="long">
+		delete from t_sys_resources where reid=#{reid}
+	</delete>
 </mapper>

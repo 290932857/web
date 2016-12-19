@@ -11,9 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.e6wifi.cmp.business.sys.menu.model.SysResources;
+import com.e6wifi.cmp.business.sys.menu.entity.SysResourceEntity;
 import com.e6wifi.cmp.business.sys.menu.service.SysResourcesService;
-import com.e6wifi.cmp.business.sys.user.model.SysUser;
+import com.e6wifi.cmp.business.sys.user.entity.SysUserEntity;
 import com.e6wifi.cmp.common.datasource.DataSourceChange;
 import com.e6wifi.cmp.common.datasource.DataSourceContextHolder;
 
@@ -45,7 +45,7 @@ public class IndexController {
 			return "[]";
 		}*/
 		// 登录状态下，获取菜单
-		List<SysResources> resources = sysResourcesService.getSysResourcesByUser(1);
+		List<SysResourceEntity> resources = sysResourcesService.getSysResourcesByUser(1);
 		JsonConfig jsonConfig = new JsonConfig();
 		jsonConfig.setIgnoreDefaultExcludes(false);
 		jsonConfig.setExcludes(new String[] { "parent" });

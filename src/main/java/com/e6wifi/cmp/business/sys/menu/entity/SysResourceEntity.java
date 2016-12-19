@@ -1,4 +1,4 @@
-package com.e6wifi.cmp.business.sys.menu.model;
+package com.e6wifi.cmp.business.sys.menu.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 /**
  * 资源列表实体类：t_sys_resources
  * 
- * @author Lijiacheng
+ * @author luo
  */
-public class SysResources {
+public class SysResourceEntity {
 
     private Integer reid;
     private String name;
@@ -18,9 +18,10 @@ public class SysResources {
     private Integer type;
     private Long dateline;
     private Integer sort;
+    
 	// 冗余字段，做关联时使用
-    private SysResources parent;
-    private List<SysResources> children = new ArrayList<SysResources>(); // 子菜单
+    private SysResourceEntity parent;
+    private List<SysResourceEntity> children = new ArrayList<SysResourceEntity>(); // 子菜单
 
     public Integer getReid() {
         return reid;
@@ -86,19 +87,19 @@ public class SysResources {
 		this.sort = sort;
 	}
 
-	public SysResources getParent() {
+	public SysResourceEntity getParent() {
 		return parent;
 	}
 
-	public void setParent(SysResources parent) {
+	public void setParent(SysResourceEntity parent) {
 		this.parent = parent;
 	}
 
-	public List<SysResources> getChildren() {
+	public List<SysResourceEntity> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<SysResources> children) {
+	public void setChildren(List<SysResourceEntity> children) {
 		this.children = children;
 	}
 

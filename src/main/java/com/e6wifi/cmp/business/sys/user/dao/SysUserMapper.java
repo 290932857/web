@@ -2,7 +2,7 @@ package com.e6wifi.cmp.business.sys.user.dao;
 
 import java.util.Map;
 
-import com.e6wifi.cmp.business.sys.user.model.SysUser;
+import com.e6wifi.cmp.business.sys.user.entity.SysUserEntity;
 
 /**
  * 用户Mapper
@@ -17,6 +17,6 @@ public interface SysUserMapper {
 	 * @param paramMap
 	 * @return
 	 */
-	SysUser getSysUser(Map<String, String> paramMap);
+	SysUserEntity getSysUser(Map<String, String> paramMap);
 
 }

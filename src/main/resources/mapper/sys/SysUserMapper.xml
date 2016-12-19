@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.e6wifi.cmp.business.sys.user.dao.SysUserMapper">
-	<resultMap id="BaseResultMap" type="com.e6wifi.cmp.business.sys.user.model.SysUser">
+	<resultMap id="BaseResultMap" type="com.e6wifi.cmp.business.sys.user.entity.SysUserEntity">
 		<id column="uid" property="userId" jdbcType="INTEGER" />
 		<result column="user_name" property="userName" jdbcType="VARCHAR" />
 		<result column="login_id" property="loginId" jdbcType="VARCHAR" />

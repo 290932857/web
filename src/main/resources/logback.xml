@@ -6,11 +6,11 @@
     </encoder>
   </appender>
 
-  <logger name="com.e6wifi" level="debug" additivity="false">
+  <logger name="com.e6wifi" level="info" additivity="false">
     <appender-ref ref="stdout"/>
   </logger>
 
-  <root level="debug">
+  <root level="info">
     <appender-ref ref="stdout"/>
   </root>
 </configuration>

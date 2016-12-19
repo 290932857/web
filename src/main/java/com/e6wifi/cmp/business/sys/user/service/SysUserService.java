@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.e6wifi.cmp.business.sys.user.dao.SysUserMapper;
-import com.e6wifi.cmp.business.sys.user.model.SysUser;
+import com.e6wifi.cmp.business.sys.user.entity.SysUserEntity;
 
 @Component("sysUserService")
 public class SysUserService {
@@ -25,7 +25,7 @@ public class SysUserService {
 	 * @return
 	 * @throws Exception
 	 */
-	public SysUser login(String logId, String password) throws Exception {
+	public SysUserEntity login(String logId, String password) throws Exception {
 		if (StringUtils.isBlank(logId)) {
 			throw new Exception("用户为空");
 		}

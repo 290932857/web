@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.e6wifi.cmp.business.sys.user.model.SysUser;
+import com.e6wifi.cmp.business.sys.user.entity.SysUserEntity;
 import com.e6wifi.cmp.business.sys.user.service.SysUserService;
 import com.e6wifi.cmp.common.datasource.DataSourceChange;
 import com.e6wifi.cmp.common.datasource.DataSourceContextHolder;
@@ -43,7 +43,7 @@ public class LoginController {
 		DataSourceChange.dataToPlatform();
 		logger.info("login--changeA--dataSource: " + DataSourceContextHolder.getDataSourceType());
 		ResponseJson responseJson = new ResponseJson();
-		SysUser user = sysUserService.login(loginId, password);
+		SysUserEntity user = sysUserService.login(loginId, password);
 		// 用户不为空，设置session
 		if (user != null) {
 			HttpSession session = request.getSession();
