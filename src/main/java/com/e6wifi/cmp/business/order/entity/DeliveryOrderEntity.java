@@ -14,11 +14,6 @@ public class DeliveryOrderEntity extends BaseEntity {
 	private String orderNo;
 	
 	/**
-	 * 客户公司
-	 */
-	private Long customerOid;
-	
-	/**
 	 * 客户公司名称
 	 */
 	private String customerName;
@@ -26,17 +21,22 @@ public class DeliveryOrderEntity extends BaseEntity {
 	/**
 	 * 客户公司联系人
 	 */
-	private String providerLinkman;
+	private String customerLinkman;
 	
 	/**
 	 * 客户公司电话
 	 */
-	private String providerTelphone;
+	private String customerTelphone;
 	
 	/**
 	 * 客户公司传真
 	 */
-	private String providerFax;
+	private String customerFax;
+	
+	/**
+	 * 出货日期
+	 */
+	private Date deliveryDate;
 	
 	/**
 	 * 下单日期
@@ -51,12 +51,20 @@ public class DeliveryOrderEntity extends BaseEntity {
 		this.orderNo = orderNo;
 	}
 
-	public Long getCustomerOid() {
-		return customerOid;
+	public Date getOrderDate() {
+		return orderDate;
 	}
 
-	public void setCustomerOid(Long customerOid) {
-		this.customerOid = customerOid;
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 	public String getCustomerName() {
@@ -67,36 +75,28 @@ public class DeliveryOrderEntity extends BaseEntity {
 		this.customerName = customerName;
 	}
 
-	public String getProviderLinkman() {
-		return providerLinkman;
+	public String getCustomerLinkman() {
+		return customerLinkman;
 	}
 
-	public void setProviderLinkman(String providerLinkman) {
-		this.providerLinkman = providerLinkman;
+	public void setCustomerLinkman(String customerLinkman) {
+		this.customerLinkman = customerLinkman;
 	}
 
-	public String getProviderTelphone() {
-		return providerTelphone;
+	public String getCustomerTelphone() {
+		return customerTelphone;
 	}
 
-	public void setProviderTelphone(String providerTelphone) {
-		this.providerTelphone = providerTelphone;
+	public void setCustomerTelphone(String customerTelphone) {
+		this.customerTelphone = customerTelphone;
 	}
 
-	public String getProviderFax() {
-		return providerFax;
+	public String getCustomerFax() {
+		return customerFax;
 	}
 
-	public void setProviderFax(String providerFax) {
-		this.providerFax = providerFax;
-	}
-
-	public Date getOrderDate() {
-		return orderDate;
-	}
-
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
+	public void setCustomerFax(String customerFax) {
+		this.customerFax = customerFax;
 	}
 	
 }

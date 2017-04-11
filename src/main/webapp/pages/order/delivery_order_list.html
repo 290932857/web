@@ -11,13 +11,13 @@
 <script type="text/javascript">
 Ext.onReady(function() {
 	var orderStore = Ext.create('Ext.data.Store', {
-		fields : [ 'oid', 'orderNo', 'providerName', 'orderDate', 'state'],
+		fields : [ 'oid', 'orderNo', 'customerName', 'customerLinkman', 'deliveryDate', 'customerTelphone', 'customerFax'],
 		pageSize : 20,
 		remoteSort : false,
 		remoteFilter : true,
 		proxy : {
 			type : 'ajax',
-			url : '/web/order/productOrderList.do',
+			url : '/web/order/deliveryOrderList.do',
 			reader : {
 				type : 'json',
 				rootProperty : 'list',
@@ -27,22 +27,9 @@ Ext.onReady(function() {
 		autoLoad : true
 	});
 	
-	var warehouseStore = Ext.create('Ext.data.Store', {
-		fields : [ 'oid', 'name'],
-		proxy : {
-			type : 'ajax',
-			url : '/web/warehouse/getWarehouse.do',
-			reader : {
-				type : 'json',
-				rootProperty : 'data'
-			}
-		}
-	});
-	
 	orderStore.on("beforeload",function(){
 		var queryParams = {
-   			 'orderNo' : Ext.getCmp("orderNo_search").value,
-   			 'state' : Ext.getCmp("state_search").value
+   			 'orderNo' : Ext.getCmp("orderNo_search").value
 		};
 	    Ext.apply(orderStore.proxy.extraParams, queryParams);
 	});
@@ -54,15 +41,6 @@ Ext.onReady(function() {
 	        return null; 
 	    } 
 	 }
-	
-	var orderStateStore = new Ext.data.SimpleStore({
-	    data:[
-		        [1,"待通知"],
-		        [2,"已签收"],
-		        [3,"过期合同"]
-		    ],
-		    fields:["state","stateName"]
-		});
 	
 	var deleteOrderFunction = function (data){
     	Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
@@ -99,38 +77,10 @@ Ext.onReady(function() {
 		});
     }
 	
-	var signFunction = function(data) {
-		Ext.Msg.confirm("警告", "确定签收并且入库吗？", function (button) {
-			if (button == "yes") {
-				//获得要签收的元素
-		  		var oid = data.oid;
-				//ajax请求
-		  		Ext.Ajax.request({
-		             url: '/web/order/signProductOrder.do',
-		             method: "post",
-		             success: function (response, opts) {
-		                 Ext.MessageBox.hide();
-		                 var json = Ext.JSON.decode(response.responseText);
-		                 if (json.success) {
-		                	 orderStore.load();
-		                     Ext.Msg.alert('系统提示', "签收入库成功");
-		                 } else {
-		                     Ext.Msg.alert("系统提示", json.message);
-		                 }
-		             },
-		             failure: function () {
-		                 Ext.Msg.alert('系统提示', '系统出错！');
-		             },
-		             params: {'oid' : oid}
-		        });
-			}
-		});
-    }
-	
 	//按钮
 	var gridbar = Ext.create('Ext.container.ButtonGroup',{
         items: [{
-            text: '添加',
+            text: '添加送货单',
             handler : showBatchEdit,
             icon: '/web/resources/ext/shared/icons/fam/add.png',
         }, {
@@ -168,12 +118,10 @@ Ext.onReady(function() {
 				dock : 'top',
 				hidden : true,
 				items : [{xtype: 'textfield',width:100, id : 'orderNo_search', emptyText: '订单序号'},
-				         {xtype: 'combobox',width:100, id : 'state_search', store: orderStateStore, valueField: 'state',displayField: 'stateName', editable : false, emptyText: '订单状态'},
 							"-",{text : '搜索', handler : function(){
 						 orderStore.load({
 	                         params : {
-	                             'orderNo' : Ext.getCmp("orderNo_search").value,
-	                             'state' : Ext.getCmp("state_search").value
+	                             'orderNo' : Ext.getCmp("orderNo_search").value
 	                         }
                     	 });
                  }},{text : '重置', handler : function(){
@@ -181,8 +129,7 @@ Ext.onReady(function() {
                      Ext.getCmp("state_search").setValue("");
                      orderStore.load({
                          params : {
-                             'orderNo' : "",
-                             'state' : ""
+                             'orderNo' : ""
                          }
                      });
                  }
@@ -225,39 +172,37 @@ Ext.onReady(function() {
 	                }
 				}]
 			} ,{
-				text : '订单号',
+				text : '送货单号',
 				dataIndex : 'orderNo',
 				flex : 2
 			}, {
-				text : '供应商',
-				dataIndex : 'providerName',
+				text : '公司名称',
+				dataIndex : 'customerName',
 				flex : 2
 			}, {
-				text : '下单日期',
-				dataIndex : 'orderDate',
+				text : '联系人',
+				dataIndex : 'customerLinkman',
+				flex : 2
+			}, {
+				text : '电话',
+				dataIndex : 'customerTelphone',
+				flex : 2
+			}, {
+				text : '传真',
+				dataIndex : 'customerFax',
+				flex : 2
+			}, {
+				text : '出货日期',
+				dataIndex : 'deliveryDate',
 				renderer : function(value) {
 					if(null != value){ 
-				        return Ext.Date.format(new Date(value), 'Y-m-d H:i:s'); 
+				        return Ext.Date.format(new Date(value), 'Y-m-d'); 
 				    }else{ 
 				        return null; 
 				    } 
 			 	},
 				flex : 2
-			}, {
-                header : '订单状态',
-                dataIndex : 'state',
-                flex : 1,
-                renderer:function(value){
-                    switch(value){
-                    case 1:
-                        return '待通知'
-                    case 2:
-                        return '已签收'
-                    case 3:
-                        return '过期合同'
-                    }
-                }
-            }],
+			}],
 			bbar : new Ext.PagingToolbar({
 				store : orderStore,
 				pageSize : 20,
