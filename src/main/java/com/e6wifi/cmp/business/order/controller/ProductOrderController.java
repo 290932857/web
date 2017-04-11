@@ -15,6 +15,11 @@ import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.common.model.Page;
 import com.e6wifi.cmp.common.model.ResponseJson;
 
+/**
+ * 进货单
+ * @author luo
+ *
+ */
 @Controller
 public class ProductOrderController {
 	

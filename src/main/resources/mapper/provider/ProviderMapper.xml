@@ -3,33 +3,46 @@
 <mapper namespace="com.e6wifi.cmp.business.provider.dao.ProviderDao">
 	<select id="getProviderPage" resultType="com.e6wifi.cmp.business.provider.entity.ProviderEntity" 
 			parameterType="com.e6wifi.cmp.business.provider.entity.ProviderEntity">
-		select oid, name, address, linkman, linkman_telphone as linkmanTelphone, fax from t_provider
+		select oid, name, address, linkman, linkman_telphone as linkmanTelphone, fax, type from t_provider
 		where 1=1
 		<if test="name != null and name != ''">
-			and o.name like CONCAT('%',#{orderNo},'%')
+			and name like CONCAT('%',#{orderNo},'%')
+		</if>
+		<if test="type != null">
+			and type=#{type}
 		</if>
 	</select>
 	
 	<select id="getProviderProductPage" resultType="com.e6wifi.cmp.business.product.entity.ProductEntity" 
 			parameterType="com.e6wifi.cmp.business.provider.entity.ProviderEntity">
-		select d.oid, d.p_name as pName, type, outline, pack_type as packType, description, unit_type as unitType, price, add_date as addDate from t_provider p left join t_product d on p.oid=d.provider_oid
+		select d.oid, d.p_name as pName, p.type, d.type as dType, outline, pack_type as packType, description, unit_type as unitType, price, add_date as addDate from t_provider p left join t_product d on p.oid=d.provider_oid
 		where 1=1
 		<if test="oid != null and oid != 0">
 			and p.oid=#{oid}
+		</if>
+		<if test="type != null">
+			and p.type=#{type}
 		</if>
 	</select>
 	
 	<select id="getProviderProductList" resultType="com.e6wifi.cmp.business.product.entity.ProductEntity" 
 			parameterType="com.e6wifi.cmp.business.provider.entity.ProviderEntity">
-		select d.oid, d.p_name as pName, type, outline, pack_type as packType, description, unit_type as unitType, price, add_date as addDate from t_provider p left join t_product d on p.oid=d.provider_oid
+		select d.oid, d.p_name as pName, d.type as pType, outline, pack_type as packType, description, unit_type as unitType, price, add_date as addDate from t_provider p left join t_product d on p.oid=d.provider_oid
 		where 1=1
 		<if test="oid != null and oid != 0">
 			and p.oid=#{oid}
+		</if>
+		<if test="type != null">
+			and p.type=#{type}
 		</if>
 	</select>
 	
 	<select id="getProviderList" resultType="com.e6wifi.cmp.business.provider.entity.ProviderEntity" 
 			parameterType="com.e6wifi.cmp.business.provider.entity.ProviderEntity">
-		select oid, name, address, linkman, linkman_telphone as linkmanTelphone, fax from t_provider
+		select oid, name, address, linkman, type, linkman_telphone as linkmanTelphone, fax from t_provider
+		where 1=1
+		<if test="type != null">
+			and p.type=#{type}
+		</if>
 	</select>
 </mapper>

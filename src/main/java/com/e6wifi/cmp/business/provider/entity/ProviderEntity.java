@@ -2,6 +2,11 @@ package com.e6wifi.cmp.business.provider.entity;
 
 import com.e6wifi.cmp.common.entity.BaseEntity;
 
+/**
+ * 供应商/客户
+ * @author luo
+ *
+ */
 public class ProviderEntity extends BaseEntity {
 
 	/**
@@ -10,12 +15,12 @@ public class ProviderEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 供应商名称
+	 * 名称
 	 */
 	private String name;
 	
 	/**
-	 * 供应商地址
+	 * 地址
 	 */
 	private String address;
 	
@@ -33,6 +38,11 @@ public class ProviderEntity extends BaseEntity {
 	 * 传真
 	 */
 	private String fax;
+	
+	/**
+	 * 供应商/客户类型区分  0 供应商  1客户
+	 */
+	private Integer type;
 
 	public String getName() {
 		return name;
@@ -72,5 +82,13 @@ public class ProviderEntity extends BaseEntity {
 
 	public void setFax(String fax) {
 		this.fax = fax;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 }

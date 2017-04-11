@@ -9,7 +9,7 @@
   <logger name="com.e6wifi" level="info" additivity="false">
     <appender-ref ref="stdout"/>
   </logger>
-
+  
   <root level="info">
     <appender-ref ref="stdout"/>
   </root>

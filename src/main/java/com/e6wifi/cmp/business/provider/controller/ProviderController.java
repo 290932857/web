@@ -22,7 +22,7 @@ public class ProviderController {
 	private ProviderService providerService;
 
 	/**
-	 * 供应商
+	 * 供应商/客户
 	 * @param page
 	 * @param start
 	 * @param limit
@@ -75,9 +75,9 @@ public class ProviderController {
 	
 	@RequestMapping("/provider/getProviderList")
 	@ResponseBody
-	public ResponseJson getProviderList() {
+	public ResponseJson getProviderList(ProviderEntity query) {
 		ResponseJson json = new ResponseJson();
-		List<ProductEntity> list = providerService.getProviderList();
+		List<ProductEntity> list = providerService.getProviderList(query);
 		json.setSuccess(true);
 		json.setData(list);
 		return json;

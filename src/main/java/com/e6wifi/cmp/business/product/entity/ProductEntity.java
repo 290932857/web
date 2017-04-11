@@ -29,7 +29,7 @@ public class ProductEntity extends BaseEntity {
 	/**
 	 * 产品型号
 	 */
-	private Integer type;
+	private Integer pType;
 	
 	/**
 	 * 产品外形
@@ -93,14 +93,6 @@ public class ProductEntity extends BaseEntity {
 		this.pName = pName;
 	}
 
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
 	public Integer getOutline() {
 		return outline;
 	}
@@ -155,5 +147,13 @@ public class ProductEntity extends BaseEntity {
 
 	public void setOrderOid(Long orderOid) {
 		this.orderOid = orderOid;
+	}
+
+	public Integer getpType() {
+		return pType;
+	}
+
+	public void setpType(Integer pType) {
+		this.pType = pType;
 	}
 }
