@@ -9,9 +9,14 @@ public class DeliveryOrderEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 订单号
+	 * 发送单号
 	 */
 	private String orderNo;
+	
+	/**
+	 * 客户公司ID
+	 */
+	private Integer customerOid;
 	
 	/**
 	 * 客户公司名称
@@ -97,6 +102,14 @@ public class DeliveryOrderEntity extends BaseEntity {
 
 	public void setCustomerFax(String customerFax) {
 		this.customerFax = customerFax;
+	}
+
+	public Integer getCustomerOid() {
+		return customerOid;
+	}
+
+	public void setCustomerOid(Integer customerOid) {
+		this.customerOid = customerOid;
 	}
 	
 }

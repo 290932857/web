@@ -15,7 +15,7 @@ public class DeliveryOrderDtEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 订单ID
+	 * 主表OID
 	 */
 	private Long orderOid;
 	

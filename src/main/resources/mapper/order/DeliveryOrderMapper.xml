@@ -4,7 +4,7 @@
 	<select id="getDeliveryOrderPage" resultType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" 
 			parameterType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity">
 		select 
-			o.oid, order_no, customer_oid, o.delivery_date as deliveryDate, o.create_user_id, o.create_time, u.uid, u.user_name, 
+			o.oid, order_no as orderNo, customer_oid, o.delivery_date as deliveryDate, o.create_user_id, o.create_time, u.uid, u.user_name, 
 			p.name as customerName, p.linkman as customerLinkman, p.linkman_telphone as customerTelphone, p.fax as customerFax 
 		from 
 			t_delivery_order o 
@@ -15,6 +15,19 @@
 			and o.order_no like CONCAT('%',#{orderNo},'%')
 		</if>
 	</select>
+	
+	
+	<insert id="insertOrder" parameterType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" useGeneratedKeys="true" keyProperty="oid">
+	  insert into t_delivery_order(order_no, customer_oid, delivery_date, create_user_id, create_time)
+	  values(#{orderNo}, #{customerOid}, #{deliveryDate}, #{createUserId}, #{createTime})
+	</insert>
+	
+	<insert id="insertOrderDt" parameterType="java.util.List">
+		insert into t_delivery_order_dt(order_oid, product_oid, num) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.orderOid},#{item.productOid},#{item.num})
+		</foreach>
+	</insert>
 	
 	<!-- <select id="getProductOrder" resultType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" 
 			parameterType="long">
@@ -39,18 +52,6 @@
 			and order_oid=#{orderOid}
 		</if>
 	</select>
-	
-	<insert id="insertOrder" parameterType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" useGeneratedKeys="true" keyProperty="oid">
-	  insert into t_order(order_no, warehouse_oid, provider_oid, order_date, state, description, create_user_id, create_time) 
-	  values(#{orderNo}, #{warehouseOid}, #{providerOid}, #{orderDate}, #{state}, #{description}, #{createUserId}, #{createTime})
-	</insert>
-	
-	<insert id="insertOrderDt" parameterType="java.util.List">
-		insert into t_order_dt(order_oid, product_oid, num) values
-		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.orderOid},#{item.productOid},#{item.num})
-		</foreach>
-	</insert>
 	
 	<delete id="deleteOrder" parameterType="long">
 		delete from t_order where oid=#{oid}

@@ -5,13 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity;
+import com.e6wifi.cmp.business.order.entity.ProductOrderEntity;
 import com.e6wifi.cmp.business.order.service.DeliveryOrderService;
 import com.e6wifi.cmp.business.sys.user.controller.LoginController;
 import com.e6wifi.cmp.common.model.Page;
+import com.e6wifi.cmp.common.model.ResponseJson;
 
 /**
  * 出货单
@@ -26,6 +29,13 @@ public class DeliveryOrderController {
 	@Autowired
 	private DeliveryOrderService deliveryOrderService;
 	
+	/**
+	 * 获取发货单列表
+	 * @param page
+	 * @param limit
+	 * @param query
+	 * @return
+	 */
 	@RequestMapping("/order/deliveryOrderList")
 	@ResponseBody
 	public Page getList(@RequestParam Integer page, @RequestParam Integer limit, DeliveryOrderEntity query) {
@@ -36,5 +46,24 @@ public class DeliveryOrderController {
 		query.setPager(pager);
 		deliveryOrderService.getDeliveryOrderPage(query);
 		return pager;
+	}
+	
+	/**
+	 * 保存发货单
+	 * @param entity
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/order/saveDeliveryOrder", method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseJson saveProductOrder(DeliveryOrderEntity entity, @RequestParam String params) {
+		System.out.println(entity.toString());
+		System.out.println(params);
+		ResponseJson json = new ResponseJson();
+		//保存订单
+		deliveryOrderService.saveDeliveryOrder(entity, params);
+		//保存库存表
+		json.setSuccess(true);
+		return json;
 	}
 }

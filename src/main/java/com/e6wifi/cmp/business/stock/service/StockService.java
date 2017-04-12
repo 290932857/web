@@ -31,11 +31,24 @@ public class StockService {
 	}
 
 	/**
-	 * 库存更新
+	 * 添加库存
 	 * @return
 	 */
 	public Long insertStocks(List<StockEntity> stockEntities) {
 		long num = stockDao.insertStocks(stockEntities);
+		if(num > 0) {
+			return num;
+		}
+		return 0l;
+	}
+	
+	/**
+	 * 更新库存
+	 * @param entities
+	 * @return
+	 */
+	public Long updateStocks(List<StockEntity> entities) {
+		long num = stockDao.updateStocks(entities);
 		if(num > 0) {
 			return num;
 		}

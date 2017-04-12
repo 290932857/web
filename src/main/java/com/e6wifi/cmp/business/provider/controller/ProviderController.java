@@ -73,6 +73,11 @@ public class ProviderController {
 		return new ArrayList<ProductEntity>();
 	}
 	
+	/**
+	 *  查询供货商
+	 * @param query
+	 * @return
+	 */
 	@RequestMapping("/provider/getProviderList")
 	@ResponseBody
 	public ResponseJson getProviderList(ProviderEntity query) {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.e6wifi.cmp.common.model.Page;
+import com.google.gson.Gson;
 
 public class BaseEntity implements Serializable {
 
@@ -59,5 +60,11 @@ public class BaseEntity implements Serializable {
 
 	public void setPager(Page pager) {
 		this.pager = pager;
+	}
+	
+	@Override
+	public String toString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 }

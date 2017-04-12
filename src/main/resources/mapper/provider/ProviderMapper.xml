@@ -42,7 +42,7 @@
 		select oid, name, address, linkman, type, linkman_telphone as linkmanTelphone, fax from t_provider
 		where 1=1
 		<if test="type != null">
-			and p.type=#{type}
+			and type=#{type}
 		</if>
 	</select>
 </mapper>

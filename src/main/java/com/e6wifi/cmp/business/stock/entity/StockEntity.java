@@ -46,8 +46,14 @@ public class StockEntity extends BaseEntity {
 	 */
 	private Date addDate;
 	
+	/**
+	 * 产品单位
+	 */
+	private Integer unitType;
+	
 	
 	//-------------以下字段为虚拟字段
+	private String orderNo;
 	private String providerName;
 	private String productName;
 	private String productType;
@@ -56,6 +62,7 @@ public class StockEntity extends BaseEntity {
 	private Double productPrice;
 	private Double totalPrice;
 	private String warehouseName;
+	private String unitTypeName;
 
 	public Long getOrderOid() {
 		return orderOid;
@@ -167,6 +174,30 @@ public class StockEntity extends BaseEntity {
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	public Integer getUnitType() {
+		return unitType;
+	}
+
+	public void setUnitType(Integer unitType) {
+		this.unitType = unitType;
+	}
+
+	public String getUnitTypeName() {
+		return unitTypeName;
+	}
+
+	public void setUnitTypeName(String unitTypeName) {
+		this.unitTypeName = unitTypeName;
 	}
 
 }

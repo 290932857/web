@@ -29,4 +29,11 @@ public interface StockDao {
 	 * @return
 	 */
 	public Long deleteStockByOrderOid(@Param("orderOid")Long orderOid);
+	
+	/**
+	 * 更新库存
+	 * @param entities
+	 * @return
+	 */
+	public Long updateStocks(List<StockEntity> entities);
 }

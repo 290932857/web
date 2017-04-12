@@ -5,10 +5,10 @@
 	<select id="getStockPage" resultType="com.e6wifi.cmp.business.stock.entity.StockEntity" 
 			parameterType="com.e6wifi.cmp.business.stock.entity.StockEntity">
 		select 
-			s.oid, s.num,  p.name as providerName, s.add_date as addDate, pd.p_name as productName, pd.type as productType, 
-			pd.outline as productOutline, pd.pack_type as productPackType, w.name as warehouseName, pd.price as productPrice,  pd.price * s.num as totalPrice
+			s.oid, s.num, o.order_no as orderNo, s.order_oid as orderOid, p.name as providerName, s.add_date as addDate, pd.oid as productOid, pd.p_name as productName, pd.type as productType, 
+			pd.outline as productOutline, pd.pack_type as productPackType, w.name as warehouseName, pd.price as productPrice,  pd.price * s.num as totalPrice, pd.unit_type as unitType
 		from 
-			t_stock s left join t_provider p on s.provider_oid = p.oid left join t_warehouse w on s.warehouse_oid=w.oid left join t_product pd on s.product_oid = pd.oid
+			t_stock s left join t_product_order o on s.order_oid=o.oid left join t_provider p on s.provider_oid = p.oid left join t_warehouse w on s.warehouse_oid=w.oid left join t_product pd on s.product_oid = pd.oid
 		where 1=1
 		<if test="productName != null and productName != ''">
 			and pd.p_name like CONCAT('%',#{productName},'%')
@@ -18,6 +18,9 @@
 		</if>
 		<if test="warehouseOid != null and warehouseOid != ''">
 			and s.warehouse_oid = #{warehouseOid}
+		</if>
+		<if test="num != null">
+			and s.num > #{num}
 		</if>
 	</select>
 	
@@ -32,4 +35,9 @@
 		delete from t_stock where order_oid=#{orderOid}
 	</delete>
 	
+	<update id="updateStocks" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" separator=";" close="" open="">
+			update t_stock set num = num - #{item.num} where order_oid=#{item.orderOid} and product_oid=#{item.productOid}
+		</foreach>
+	</update>
 </mapper>
