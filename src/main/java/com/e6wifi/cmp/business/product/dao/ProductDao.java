@@ -19,4 +19,10 @@ public interface ProductDao {
 	 * @return
 	 */
 	public List<ProductEntity> getProductByOrderOid(@Param("orderOid") Long orderOid);
+	
+	/**
+	 * 获取所有物料信息
+	 * @return
+	 */
+	public List<ProductEntity> getProductList();
 }

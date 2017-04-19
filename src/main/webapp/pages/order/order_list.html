@@ -284,28 +284,61 @@ Ext.onReady(function() {
 		remoteFilter : true,
 		proxy : {
 			type : 'ajax',
-			url : '/web/provider/getProviderPage.do',
+			url : '/web/provider/getProviderList.do',
 			reader : {
 				type : 'json',
-				rootProperty : 'list',
-				totalProperty : 'rowCount'
+				rootProperty : 'data'
 			}
 		}
 	});
 	
 	var productStore = Ext.create('Ext.data.Store', {
-		fields : [ 'oid', 'pName', 'pType', 'outline', 'packType', 'description', 'unitType', 'price', 'num'],
+		fields : [ 'oid', 'pName', 'pType', 'outline', 'packType', 'unitType', 'price', 'num'],
 		remoteSort : false,
 		remoteFilter : true,
 		proxy : {
 			type : 'ajax',
-			url : '/web/provider/getProviderProductList.do',
+			url : '/web/product/productList.do',
+			reader : {
+				type : 'json',
+				rootProperty : 'data'
+			}
 		}
 	});
-	 var batch_form, providerOid, prductSelect;
+	var productStore1 = Ext.create('Ext.data.Store', {
+		fields : [ 'oid', 'pName', 'pType', 'outline', 'packType', 'unitType', 'price', 'num']
+	});
+	Ext.define('product', {  
+        extend : 'Ext.data.Model',  
+        fields : [{  
+                    name : 'pName',  
+                    type : 'string'  
+                }, {  
+                    name : 'pType',  
+                    type : 'auto'  
+                }, {  
+                    name : 'outline',  
+                    type : 'string'  
+                }, {  
+                    name : 'packType',  
+                    type : 'string'  
+                }, {  
+                    name : 'unitType',  
+                    type : 'string'  
+                }, {  
+                    name : 'price',  
+                    type : 'string'  
+                }, {  
+                    name : 'num',  
+                    type : 'string'  
+                }]  
+
+    });  
+	 var batch_form, providerOid, warehouseOid;
 	 function showBatchEdit() {
 		 providerOid = "";
-		 productStore.load({params:{'oid' : ''}});
+		 warehouseOid = "";
+		 productStore1.load();
 		 providerStore.load({params:{'type' : 0}});
 		 warehouseStore.load();
 		 batch_form = Ext.widget('form', {
@@ -335,72 +368,52 @@ Ext.onReady(function() {
 			                type: 'hbox',
 			                align: 'stretch'
 			            },
-		                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '订单号', allowBlank : false},
-		                        {xtype: 'combobox',  fieldLabel : '送货地址', name : 'warehouseOid', store: warehouseStore, valueField: 'oid',displayField: 'name', editable : false, emptyText: '选择送货地址'}]
+		                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '订单号', allowBlank : false, emptyText: '请输入订单号'},
+		                        {xtype: 'combobox',  fieldLabel : '送货地址', name : 'warehouseOid', store: warehouseStore, valueField: 'oid',displayField: 'name', editable : false, emptyText: '选择送货地址'},
+		                        {xtype: 'combobox',  fieldLabel : '供应商', name : 'providerOid', store: providerStore, valueField: 'oid',displayField: 'name',  editable : false, emptyText: '选择供应商'}]
 		        },
 		        {
-                	xtype: 'panel',
-                	layout: 'hbox',
-                	items : [{
-                		xtype: 'grid',
-                		flex : 1,
-                		height: 500,
-                		store : providerStore,
-                		columns: [{text : '供应商',flex : 1, dataIndex : 'name'}],
-                		listeners: {
-                	        selectionchange: function(grid, selection) {
-                	        	if(selection.length > 0) {
-                	        		providerOid = selection[0].data.oid;
-                					productStore.load({params:{'oid' : providerOid}});
-                	        	}
-                	        }
-                	    },
-            			bbar : new Ext.PagingToolbar({
-            				store : providerStore,
-            				pageSize : 10,
-            				displayMsg : '显示 {0} - {1} 条，共计 {2} 条',
-            				emptyMsg : "没有相关记录",
-            				beforePageText:"第",
-            				afterPageText:"/　{0}页",
-            				firstText:"首页",
-            				prevText:"上一页",
-            				nextText:"下一页",
-            				lastText:"尾页",
-            				refreshText:"刷新",
-            				flex : 1,
-            				displayInfo : true
-            			})
-                	}, {
-                		xtype: 'grid',
-                		flex : 2,
-                		margin: '0 0 0 10',
-                		height: 500,
-                		store : productStore,
-                		selType: 'checkboxmodel',
-                		plugins: {
-                	        ptype: 'cellediting',
-                	        clicksToEdit: 1
-                	    },
-                	    listeners: {
-                	        selectionchange: function(grid, selection) {
-                	         	prductSelect = "[";
-                	    		for(var i = 0 ; i < selection.length; i++) {
-                	    			prductSelect += "{'productOid':" + selection[i].data.oid + ", 'num' :" + selection[i].data.num +"}";
-                	    			if(i != selection.length -1) {
-                	    				prductSelect += ","
-                	    			}
-                	    		}
-                	    		prductSelect += "]";
-                	    	 }
-                	    },
-                		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
-                		          {text : '产品型号', flex : 1, dataIndex : 'pType'},
-                		          {text : '封装外形', flex : 1, dataIndex : 'outline'},
-                		          {text : '包装方式', flex : 1, dataIndex : 'packType'},
-                		          {text : '单位', flex : 1, dataIndex : 'unitType'},
-                		          {text : '单价', flex : 1, dataIndex : 'price'},
-                		          {text : '数量', flex : 1, dataIndex:'num', editor : {xtype: 'numberfield', allowBlank: false, minValue: 0, maxValue: 100000}}],
-                	}]
+               		xtype: 'grid',
+               		id:'productGrid',
+               		height: 500,
+               		store : productStore1,
+               		plugins: {
+               	        ptype: 'cellediting',
+               	        clicksToEdit: 1
+               	    },
+               		columns: [{text : '物料名称', flex : 2, dataIndex : 'pName', xtype: 'widgetcolumn', widget: {xtype: 'combo', store: productStore, valueField: 'oid',displayField: 'pName', editable : false, listeners: {
+               				 select : function(combo, record) {
+										var grid = Ext.getCmp("productGrid");
+										var selectionModel = grid.getSelectionModel();
+										var records = selectionModel.getSelection();
+										records[0].set({'pName':record.data.pName, 'oid':record.data.oid,'pType':record.data.pType, 'outline':record.data.outline, 'packType':record.data.packType, 'unitType':record.data.unitType,'price':record.data.price});
+								    },
+               				focus : function(combo, record) {
+               						console.log(this.findParentByType('widgetcolumn'));
+									//selectionModel.selectRange(rowid, rowid);
+               						}
+               					}}},
+               		          {text : '物料型号', flex : 1, dataIndex : 'pType'},
+               		          {text : '封装外形', flex : 1, dataIndex : 'outline'},
+               		          {text : '包装方式', flex : 1, dataIndex : 'packType'},
+               		          {text : '单位', flex : 1, dataIndex : 'unitType'},
+               		          {text : '单价', flex : 1, dataIndex : 'price'},
+               		          {text : '数量', flex : 1, dataIndex:'num', editor : {xtype: 'numberfield', allowBlank: false, minValue: 0, maxValue: 100000}}],
+       		       tbar: [{
+                       text: '添加物料',
+                       handler: function(){
+                    	   var rec = Ext.create('product', {  
+                    		   pName : '',  
+                               pType : '',  
+                               outline : '',
+                               packType : '',
+                               unitType : '',
+                               price : '',
+                               num : 0
+                           });
+                    	   productStore1.insert(0, rec);
+                       }
+                   }]
                 }],
 	            buttons: [{
 	                text: '取消',
@@ -414,13 +427,27 @@ Ext.onReady(function() {
                     formBind: true,
 	                handler: function() {
 	                    if (batch_form.isValid()) {
+	                    	var prductSelect = "";
+	                    	console.log(prductSelect);
+	                    	console.log(prductSelect.length);
+	                    	prductSelect = "[";
+	                    	productStore1.each(function(record){
+                	    		prductSelect += "{'productOid':" + record.data.oid + ", 'num' :" + record.data.num +"},";
+	                    	});
+	                    	if(prductSelect.length > 1) {
+	                    		prductSelect.substring(0, prductSelect.length-2);
+	                    	} else {
+	                    		Ext.Msg.alert('提示', '请添加至少一个物料');
+	                    		return;
+	                    	}
+	                    	prductSelect += "]";
 	                    	batch_form.submit({
 	                    	    clientValidation: true,
 	                    	    waitMsg:'保存订单，请稍候。', 
 	                    	    waitTitle:'提示', 
 	                    	    method : 'POST',
 	                    	    url: '/web/order/saveProductOrder.do',
-	                    	    params : {"params" : prductSelect, "providerOid" : providerOid},
+	                    	    params : {"params" : prductSelect, "providerOid" : providerOid, "warehouseOid" : warehouseOid},
 	                    	    timeout: 600000,
 	                    	    success: function(form, action) {
 	                    	    	var json = Ext.JSON.decode(action.response.responseText);
@@ -533,9 +560,9 @@ Ext.onReady(function() {
                 		flex : 2,
                 		height: 300,
                 		store : orderDetailStore,
-                		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
-                		          {text : '产品型号', flex : 1, dataIndex : 'pType'},
-                		          {text : '产品外形', flex : 1, dataIndex : 'outline'},
+                		columns: [{text : '物料名称', flex : 1, dataIndex : 'pName'},
+                		          {text : '物料型号', flex : 1, dataIndex : 'pType'},
+                		          {text : '物料外形', flex : 1, dataIndex : 'outline'},
                 		          {text : '包装外形', flex : 1, dataIndex : 'packType'},
                 		          {text : '单位', flex : 1, dataIndex : 'unitType'},
                 		          {text : '单价', flex : 1, dataIndex : 'price'},
@@ -624,9 +651,9 @@ Ext.onReady(function() {
                 		xtype: 'grid',
                 		flex : 2,
                 		height: 300,
-                		columns: [{text : '产品名称', flex : 1, dataIndex : 'pName'},
-                		          {text : '产品型号', flex : 1, dataIndex : 'pType'},
-                		          {text : '产品外形', flex : 1, dataIndex : 'outline'},
+                		columns: [{text : '物料名称', flex : 1, dataIndex : 'pName'},
+                		          {text : '物料型号', flex : 1, dataIndex : 'pType'},
+                		          {text : '物料外形', flex : 1, dataIndex : 'outline'},
                 		          {text : '包装外形', flex : 1, dataIndex : 'packType'},
                 		          {text : '单位', flex : 1, dataIndex : 'unitType'},
                 		          {text : '单价', flex : 1, dataIndex : 'price'},

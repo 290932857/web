@@ -2,8 +2,6 @@ package com.e6wifi.cmp.business.provider.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.e6wifi.cmp.business.product.entity.ProductEntity;
 import com.e6wifi.cmp.business.provider.entity.ProviderEntity;
 

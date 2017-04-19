@@ -3,6 +3,7 @@ package com.e6wifi.cmp.business.order.service;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,14 @@ public class ProductOrderService {
 			Type type = new TypeToken<List<ProductOrderDtEntity>>(){}.getType();
 			List<ProductOrderDtEntity> orderDtEntities = gson.fromJson(params, type);
 			if(orderDtEntities != null && !orderDtEntities.isEmpty()) {
-				for(ProductOrderDtEntity dtEntity : orderDtEntities) {
-					dtEntity.setOrderOid(entity.getOid());
+				Iterator<ProductOrderDtEntity> iterator = orderDtEntities.iterator();
+				while(iterator.hasNext()) {
+					ProductOrderDtEntity dtEntity = iterator.next();
+					if(dtEntity != null && dtEntity.getNum() > 0) {
+						dtEntity.setOrderOid(entity.getOid());
+					} else {
+						iterator.remove();
+					}
 				}
 			}
 			productOrderDao.insertOrderDt(orderDtEntities);

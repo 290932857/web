@@ -10,4 +10,8 @@
 			and s.order_oid = #{orderOid}
 		</if>
 	</select>
+	
+	<select id="getProductList" resultType="com.e6wifi.cmp.business.product.entity.ProductEntity" >
+		select p.oid, p.p_name as pName, p.type as pType, p.outline, p.unit_type as unitType, p.pack_type as packType, p.price  from t_product p
+	</select>
 </mapper>

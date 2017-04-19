@@ -22,4 +22,8 @@ public class ProductService {
 	public List<ProductEntity> getProductByOrderOid(Long orderOid) throws Exception {
 		return productDao.getProductByOrderOid(orderOid);
 	}
+	
+	public List<ProductEntity> getProductList() throws Exception{
+		return productDao.getProductList();
+	}
 }
