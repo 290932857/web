@@ -47,6 +47,8 @@ public class DeliveryOrderEntity extends BaseEntity {
 	 * 下单日期
 	 */
 	private Date orderDate;
+	
+	private String orderDateStr;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -110,6 +112,14 @@ public class DeliveryOrderEntity extends BaseEntity {
 
 	public void setCustomerOid(Integer customerOid) {
 		this.customerOid = customerOid;
+	}
+
+	public String getOrderDateStr() {
+		return orderDateStr;
+	}
+
+	public void setOrderDateStr(String orderDateStr) {
+		this.orderDateStr = orderDateStr;
 	}
 	
 }

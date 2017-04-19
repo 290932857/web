@@ -17,7 +17,7 @@ Ext.onReady(function() {
 		remoteFilter : true,
 		proxy : {
 			type : 'ajax',
-			url : '/web/stock/getStockList.do',
+			url : '/web/stock/getStockPage.do',
 			reader : {
 				type : 'json',
 				rootProperty : 'list',
@@ -117,11 +117,11 @@ Ext.onReady(function() {
 			    } 
 		 	},
 		},{
-			header : '产品名称',
+			header : '物料名称',
 			flex : 1,
 			dataIndex : 'productName'
 		},{
-			header : '产品型号',
+			header : '物料型号',
 			dataIndex : 'productType',
 			flex : 1
 		}, {
@@ -156,7 +156,7 @@ Ext.onReady(function() {
 			hidden : true,
 			items : [{xtype: 'combobox',width:100, id : 'provider_search', store: providerStore, valueField: 'oid',displayField: 'name', emptyText: '供应商选择'},
 			         {xtype: 'combobox',width:100, id : 'warehouse_search', store: warehouseStore, valueField: 'oid',displayField: 'name', emptyText: '仓库选择'},
-			         {xtype: 'textfield',width:100, id : 'productName_search',  emptyText: '产品名称'},
+			         {xtype: 'textfield',width:100, id : 'productName_search',  emptyText: '物料名称'},
 						"-",{text : '搜索', handler : function(){
 					  store.load({
                          params : {

@@ -21,6 +21,13 @@ public interface ProductDao {
 	public List<ProductEntity> getProductByOrderOid(@Param("orderOid") Long orderOid);
 	
 	/**
+	 * 通过发货单号获取产品信息
+	 * @param orderOid
+	 * @return
+	 */
+	public List<ProductEntity> getProductByDeliveryOrderOid(@Param("orderOid") Long orderOid);
+	
+	/**
 	 * 获取所有物料信息
 	 * @return
 	 */

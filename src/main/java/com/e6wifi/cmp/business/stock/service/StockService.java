@@ -23,13 +23,17 @@ public class StockService {
 	 *  库存查询
 	 * @param query
 	 */
-	public void getStockPage (StockEntity query) {
+	public void getStockPage(StockEntity query) {
 		List<StockEntity> list = stockDao.getStockPage(query);
 		if(list != null && !list.isEmpty()) {
 			query.getPager().setList(list);
 		}
 	}
 
+	public List<StockEntity> getStockList(StockEntity query) {
+		return stockDao.getStockList(query);
+	}
+	
 	/**
 	 * 添加库存
 	 * @return

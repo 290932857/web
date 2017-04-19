@@ -370,7 +370,7 @@ Ext.onReady(function() {
 			            },
 		                items: [{xtype : 'textfield', name : 'orderNo', fieldLabel: '订单号', allowBlank : false, emptyText: '请输入订单号'},
 		                        {xtype: 'combobox',  fieldLabel : '送货地址', name : 'warehouseOid', store: warehouseStore, valueField: 'oid',displayField: 'name', editable : false, emptyText: '选择送货地址'},
-		                        {xtype: 'combobox',  fieldLabel : '供应商', name : 'providerOid', store: providerStore, valueField: 'oid',displayField: 'name',  editable : false, emptyText: '选择供应商'}]
+		                        {xtype: 'combobox',  fieldLabel : '供应商', name : 'providerOid', store: providerStore, valueField: 'oid',displayField: 'name', queryMode: 'local',  editable : false, emptyText: '选择供应商'}]
 		        },
 		        {
                		xtype: 'grid',
@@ -382,7 +382,8 @@ Ext.onReady(function() {
                	        clicksToEdit: 1
                	    },
                		columns: [{text : '物料名称', flex : 2, dataIndex : 'pName', xtype: 'widgetcolumn', widget: {xtype: 'combo', store: productStore, valueField: 'oid',displayField: 'pName', editable : false, listeners: {
-               				 select : function(combo, record) {
+               				 select : function(combo, record, op) {
+               					 console.log(op);
 										var grid = Ext.getCmp("productGrid");
 										var selectionModel = grid.getSelectionModel();
 										var records = selectionModel.getSelection();

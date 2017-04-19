@@ -15,6 +15,9 @@ public interface StockDao {
 	
 	
 	public List<StockEntity> getStockPage(StockEntity query);
+	
+	
+	public List<StockEntity> getStockList(StockEntity query);
 
 	/**
 	 * 添加库存

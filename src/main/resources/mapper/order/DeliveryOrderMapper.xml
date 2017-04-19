@@ -17,6 +17,21 @@
 	</select>
 	
 	
+	<select id="getDeliveryOrder" resultType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" 
+			parameterType="long">
+		select
+			o.oid, order_no as orderNo, customer_oid as customerOid, o.delivery_date as deliveryDate,
+			p.name as customerName, p.linkman as customerLinkman, p.linkman_telphone as customerTelphone, p.fax as customerFax 
+		from 
+			t_delivery_order o 
+			left join t_provider p on o.customer_oid=p.oid
+		where 1=1
+		<if test="oid != null and oid != ''">
+			and o.oid = #{oid}
+		</if>
+	</select>
+	
+	
 	<insert id="insertOrder" parameterType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" useGeneratedKeys="true" keyProperty="oid">
 	  insert into t_delivery_order(order_no, customer_oid, delivery_date, create_user_id, create_time)
 	  values(#{orderNo}, #{customerOid}, #{deliveryDate}, #{createUserId}, #{createTime})
@@ -28,41 +43,4 @@
 			(#{item.orderOid},#{item.productOid},#{item.num})
 		</foreach>
 	</insert>
-	
-	<!-- <select id="getProductOrder" resultType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity" 
-			parameterType="long">
-		select
-			o.oid, order_no as orderNo, provider_oid as providerOid, warehouse_oid as warehouseOid, order_date as orderDate, state, description, o.create_user_id, o.create_time, u.uid, u.user_name, 
-			p.name as providerName, p.linkman as providerLinkman, p.linkman_telphone as providerTelphone, p.fax as providerFax
-		from 
-			t_order o left join t_sys_user u on o.create_user_id=u.uid
-			left join t_provider p on o.provider_oid=p.oid
-		where 1=1
-		<if test="oid != null and oid != ''">
-			and o.oid = #{oid}
-		</if>
-	</select>
-	
-	<select id="getProductOrderDts" resultType="com.e6wifi.cmp.business.order.entity.DeliveryOrderDtEntity" 
-			parameterType="long">
-		select 
-			order_oid, product_oid as productOid, num from t_order_dt
-		where 1=1
-		<if test="orderOid != null and orderOid != ''">
-			and order_oid=#{orderOid}
-		</if>
-	</select>
-	
-	<delete id="deleteOrder" parameterType="long">
-		delete from t_order where oid=#{oid}
-	</delete>
-	
-	<delete id="deleteOrderDtByOrderOid" parameterType="long">
-		delete from t_order_dt where order_oid=#{orderOid}
-	</delete>
-	
-	<update id="updateOrder" parameterType="com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity">
-		update t_order set state=#{state} where oid=#{oid}
-	</update> -->
-	
 </mapper>

@@ -23,6 +23,10 @@ public class ProductService {
 		return productDao.getProductByOrderOid(orderOid);
 	}
 	
+	public List<ProductEntity> getProductByDeliveryOrderOid(Long orderOid) throws Exception {
+		return productDao.getProductByDeliveryOrderOid(orderOid);
+	}
+	
 	public List<ProductEntity> getProductList() throws Exception{
 		return productDao.getProductList();
 	}

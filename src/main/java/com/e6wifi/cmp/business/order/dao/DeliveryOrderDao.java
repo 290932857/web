@@ -2,6 +2,8 @@ package com.e6wifi.cmp.business.order.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.e6wifi.cmp.business.order.entity.DeliveryOrderDtEntity;
 import com.e6wifi.cmp.business.order.entity.DeliveryOrderEntity;
 
@@ -22,10 +24,19 @@ public interface DeliveryOrderDao {
 	 */
 	public Long insertOrder(DeliveryOrderEntity entity);
 	
+	
+	/**
+	 * 查询订单
+	 * @param oid
+	 * @return
+	 */
+	public DeliveryOrderEntity getDeliveryOrder(@Param("oid") long oid);
+	
 	/**
 	 * 保存发货单详情
 	 * @param deliveryOrderDtEntities
 	 * @return
 	 */
 	public Long insertOrderDt(List<DeliveryOrderDtEntity> deliveryOrderDtEntities);
+	
 }
